@@ -20,7 +20,7 @@ def Main():
     freqdict=CFAM.frequencysetter(objectdict)#note that the freqdict keys are flipped wrt objectdict keys
     #don't need a type of calibration function b/c our telescope only has noisecal 
     timerdict=TDP.timeranddatapoints(objectdict)
-    filenamesdict=
+    filenamesdict=(objectdict)
     print(date)
     print(objectdict)
     print(freqdict)
