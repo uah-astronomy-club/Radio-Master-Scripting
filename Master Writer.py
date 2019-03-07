@@ -26,4 +26,5 @@ def Main():
     print(objectdict)
     print(freqdict)
     print(timerdict)
+    print(filenamesdict)
     return 
