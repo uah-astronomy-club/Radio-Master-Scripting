@@ -9,6 +9,7 @@ import TellieTime
 import CentreFrequencyAndMode as CFAM
 import TelescopePointer as TP
 import TimeAndDataPoints as TDP
+import FileDictionary2 as FD
 def Main():
     '''
     Main function that has all the needed functions in it
@@ -20,7 +21,7 @@ def Main():
     freqdict=CFAM.frequencysetter(objectdict)#note that the freqdict keys are flipped wrt objectdict keys
     #don't need a type of calibration function b/c our telescope only has noisecal 
     timerdict=TDP.timeranddatapoints(objectdict)
-    filenamesdict=(objectdict)
+    filenamesdict=FD.filenames(objectdict)
     print(date)
     print(objectdict)
     print(freqdict)
