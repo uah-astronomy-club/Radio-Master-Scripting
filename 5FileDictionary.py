@@ -9,7 +9,7 @@ def dictAppend ():
         for value in list(fileDict.items()): #for loop that should iterate through every value in the dictionary.
                                              # the list(dict) is in there because python didn't like having the values changed while the for loop was iterating through the dictionary             
 
-                fileDict[value] = str(input('++input the file name into your computer\n')) # the plus signs were/are there so I could test the while loop
+                fileDict[value] = str(input('Enter the file name into your computer\n')) # the plus signs were/are there so I could test the while loop
                 while(True): # ye "error handling" is in this while loop.  It doesn't really do anything except encourage the user to put better inputs in if they screw up.  Nothing fancy
                         
                         try:
