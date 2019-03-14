@@ -10,6 +10,7 @@ import CentreFrequencyAndMode as CFAM
 import TelescopePointer as TP
 import TimeAndDataPoints as TDP
 import FileDictionary2 as FD
+import ActualWriterTM as AWTM
 def Main():
     '''
     Main function that has all the needed functions in it
@@ -20,11 +21,7 @@ def Main():
     objectdict=TP.pointatobject(objectdict)#calls the function that asks user for objects to observe
     freqdict=CFAM.frequencysetter(objectdict)#note that the freqdict keys are flipped wrt objectdict keys
     #don't need a type of calibration function b/c our telescope only has noisecal 
-    timerdict=TDP.timeranddatapoints(objectdict)
-    filenamesdict=FD.filenames(objectdict)
-    print(date)
-    print(objectdict)
-    print(freqdict)
-    print(timerdict)
-    print(filenamesdict)
+    timerdict=TDP.timeranddatapoints(objectdict)#calls the function that asks users for observation times 
+    filenamesdict=FD.filenames(objectdict)#calls the function that asks users for filenames and directories for saving file to 
+    AWTM.ActualWriterTM(date, objectdict, freqdict, timerdict, filenamesdict)
     return 
