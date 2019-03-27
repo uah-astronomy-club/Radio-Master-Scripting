@@ -12,5 +12,12 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
     formatting is assumed to be like:
     writes the .cmd file in the proper formatting 
     '''
-    
+    #for object
+    #calibrate telescope
+    #set freq and mode 
+    #point at the object
+    #start datafile
+    #insert time for integration
+    #stop data file
+    #next object 
     return 
