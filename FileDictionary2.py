@@ -15,6 +15,8 @@ def filenames(objectdict):
     while True:
         dictoryname=input("Enter the file directory to write the .cmd files to")
         filenamesdict.update({'directoryname':dictoryname})
+        cmdname=input("Enter the name for the .cmd file")
+        filenamesdict.update({'filename':cmdname})
         break
     for thing in objectdict:
         while True:
