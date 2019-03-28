@@ -55,7 +55,7 @@ def timeranddatapoints(objectlist):
                 while True:
                     cp=input("how often do you want to calibrate the telescope (in seconds)?")
                     try: 
-                        p=int(p)
+                        p=int(cp)
                         if p<1:
                             print('Negative time? NEGATIVE TIME? Really? REALLY? Like, are you sure you want to work in a STEM field?')
                         else:
