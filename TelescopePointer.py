@@ -43,11 +43,11 @@ def pointatobject(dictionary):
                             gal_lon = str('0')+str(gal_lon)
                             if (neg == True):
                                 gal_lon = str('-') + gal_lon
-                            gal_lon = str(gal_lon)
-                            break
+                        gal_lon = str(gal_lon)
+                        break
                     else:
                         print('Invalid Input')
-                gal_coors = gal_lon + ',' + gal_lat
+                gal_coors = gal_lon + ' ' + gal_lat
                 dictionary.update({gal_coors:'Galactic'})
                 break
             elif (g_or_a.lower() == "azel"):
@@ -69,7 +69,7 @@ def pointatobject(dictionary):
                         break
                     else:
                         print('Invalid Input, Elevation must be between 0 and 90')
-                azel_coors = Azel_az + ',' + Azel_el
+                azel_coors = Azel_az + ' ' + Azel_el
                 dictionary.update({azel_coors:'Azel'})
                 break
             else:
