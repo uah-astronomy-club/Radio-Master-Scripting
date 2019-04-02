@@ -22,6 +22,7 @@ def filenames(objectdict):
         while True:
             print('Current object'+thing)
             objectstr=input('Enter what you want the .rad file for the current object to be named')
+            #need fix to prevent spaces 
             try:
                 objectstr=str(objectstr)
                 filenamesdict.update({thing:objectstr})
