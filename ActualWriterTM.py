@@ -13,7 +13,7 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
     writes the .cmd file in the proper formatting 
     '''
     
-    with open(Filenames['directoryname']+Filenames['filename']+'.txt','w+') as cmdfile:   
+    with open(Filenames['directoryname']+'\\'+Filenames['filename']+'.txt','w+') as cmdfile:   
         cmdfile.write(Date+'\n')
         for Object in Objects.keys():
             freq=0#initiates var
@@ -22,20 +22,15 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
             f=Frequencies.keys()
             if 'all' in f:
                 s=Frequencies['all']
-                s=s.split()
-                i=s.index(',')
-                for c in range(i):
-                    freq+=c
-                for c in range(i,len(s)):
-                    mode+=c
+                print(s)
+                s=s.split(',')
+                freq=s[0]
+                mode=s[1]
             else:
                 s=Frequencies[Object]
                 s=s.split()
-                i=s.index(',')
-                for c in range(i):
-                    freq+=c
-                for c in range(i,len(s)):
-                    mode+=c
+                freq=s[0]
+                mode=s[1]
             cmdfile.write(': freq'+freq+' '+mode+'\n')
             if Objects[Object]=='named':
                 cmdfile.write(': '+Object+'\n')
