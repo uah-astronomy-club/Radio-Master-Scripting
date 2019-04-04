@@ -16,8 +16,13 @@ def pointatobject(dictionary):
     
     if (l_or_c.lower() == 'listed'):
         listed_object = input('Name of Object: ')
-        #look for listed_object in list before appending
-        dictionary.update({listed_object:'named'})
+        with open("C:/Users/Owner/Desktop/Astronomy Club Program/SRT Objects.txt",'r') as searchfile:   #Change file dir based off system
+            lines = searchfile.read().splitlines()
+        if listed_object in lines:
+            print('Object added')
+            dictionary.update({listed_object:'named'})
+        else:
+            print('Object not included in the SRT directory.')
     
     elif (l_or_c.lower() == "coordinates"):
         g_or_a = input("Gal or Azel coordinates? ")
