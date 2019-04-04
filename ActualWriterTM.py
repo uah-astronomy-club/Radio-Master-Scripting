@@ -18,6 +18,7 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
         for Object in Objects.keys():
             freq=0#initiates var
             mode=0
+            time=0
             f=Frequencies.keys()
             if 'all' in f:
                 s=Frequencies['all']
@@ -43,8 +44,22 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
             elif Objects[Object]=='Azel':
                 cmdfile.write(': azel'+Object+'\n')#check to make sure this comes out in the correct format
             n=Filenames[Object]
-            cmdfile.write(": record'+' '+n+'.rad\n")
-            
+            cmdfile.write(": record"+' '+n+".rad\n")
+            if Times[Object]=='all':
+                s=Times['all']
+                s=s.split()
+                i=s.index(',')
+                for c in range(i):
+                    time+=c
+                cmdfile.write(": "+time+'\n')
+            else:
+                s=Times['all']
+                s=s.split()
+                i=s.index(',')
+                for c in range(i):
+                    time+=c
+                cmdfile.write(":"+time+'\n')
+            cmdfile.write(": roff")
     #for object
     #set freq and mode 
     #point at the object
