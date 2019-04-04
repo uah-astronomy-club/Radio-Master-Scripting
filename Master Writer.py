@@ -23,5 +23,10 @@ def Main():
     #don't need a type of calibration function b/c our telescope only has noisecal 
     timerdict=TDP.timeranddatapoints(objectdict)#calls the function that asks users for observation times 
     filenamesdict=FD.filenames(objectdict)#calls the function that asks users for filenames and directories for saving file to 
+    print(date)
+    print(objectdict)
+    print(freqdict)
+    print(timerdict)
+    print(filenamesdict)
     AWTM.ActualWriterTM(date, objectdict, freqdict, timerdict, filenamesdict)
     return 
