@@ -171,6 +171,7 @@ def current_year():
 
 # Makes values easier to enter for the user
 def main():
+    print("Input the following information about your observation")
     # Gets Month input
     monthint = int(float(input("Month Number: ")))
     while (monthint < 1 or monthint > 12):      # Checks if inputted integer is between 1 and 12
@@ -179,6 +180,8 @@ def main():
     # Gets the day of the month and does simple error handeling
     day = int(float(input("Day of the Month: ")))
     while (day < 1 or day > 31):
+        day = int(float(input("Input valid day: ")))
+    while((monthint==9 or monthint==4 or monthint==6 or monthint==11)and day > 30):
         day = int(float(input("Input valid day: ")))
 
     # Prompts the user for the year
