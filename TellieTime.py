@@ -79,9 +79,9 @@ def TellieTime(Day,Month,Year,Time,M):
                 Th=int(Time[0])+17 #adds 12 to convert to military then 5 to universal
         else: #this should run the above if/else for double digit hours
             if isDaylightSavings(Year, Month, Day)==False: #checks for daylightsavings 
-                Th=int(Time[0:2])+6
+                Th=int(Time[0:2])+18
             else:
-                Th=int(Time[0:2])+5
+                Th=int(Time[0:2])+17
     else: #means time is in am & we can just add
         if len(Time)==4: #checks if the hour is single digits 
             if isDaylightSavings(Year, Month, Day)==False: #checks for daylightsavings 
@@ -90,9 +90,9 @@ def TellieTime(Day,Month,Year,Time,M):
                 Th=int(Time[0])+5
         else: #this should run the above if/else for double digit hours
             if isDaylightSavings(Year, Month, Day)==False: #checks for daylightsavings 
-                Th=int(Time[0:2])+6
+                Th=int(Time[0:2])+18
             else:
-                Th=int(Time[0:2])+5
+                Th=int(Time[0:2])+17
     if Th>=24: #if our time conversion has put us past midnight in universal time, we need to change the date
         Th-=24
         d+=1
