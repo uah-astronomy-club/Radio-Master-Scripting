@@ -14,7 +14,7 @@ def TellieTime(Day,Month,Year,Time,M):
     M is the AM/PM marker, needs to be a str and in all caps 
     """ 
     #comment test
-    if isLeapYear(Year) == True: #checks if leap year -> changed from previous version
+    if isLeapYear(Year) == True: #checks if leap year
         if Month==1:
             Dadjust=0
         elif Month==2:
@@ -76,7 +76,7 @@ def TellieTime(Day,Month,Year,Time,M):
             if isDaylightSavings(Year, Month, Day)==False:  
                 Th=int(Time[0])+18 #adds 12 to convert to military then 6 to universal
             else:
-                Th=int(Time[0])+17 #adds 12 to convert to mulitary then 5 to universal
+                Th=int(Time[0])+17 #adds 12 to convert to military then 5 to universal
         else: #this should run the above if/else for double digit hours
             if isDaylightSavings(Year, Month, Day)==False: #checks for daylightsavings 
                 Th=int(Time[0:2])+6
@@ -112,8 +112,9 @@ def TellieTime(Day,Month,Year,Time,M):
     d=str(d)
     Year=abs(Year)
     y=str(Year)
-    #print(y+':'+d+':'+Ti+':00') #prints the formatted stuff
+    print(y+':'+d+':'+Ti+':00') #prints the formatted stuff for error checking
     return (y+':'+d+':'+Ti+':00')
+
 # Daylight savings helper function
 def isDaylightSavings(Year, Month, Day):
     '''
@@ -156,7 +157,7 @@ def isLeapYear(year):
             if year % 400 == 0:
                 Leap_year = True
             else:
-                Leap_Year = False
+                Leap_year = False
         else:
             Leap_year = True
     else:
@@ -172,6 +173,12 @@ def current_year():
 # Makes values easier to enter for the user
 def main():
     print("Input the following information about your observation")
+    
+    # Prompts the user for the year
+    inpt_year = int(float(input("Year: ")))
+    while (inpt_year < current_year()):
+        inpt_year = int(float(input("Input valid year: ")))
+    
     # Gets Month input
     monthint = int(float(input("Month Number: ")))
     while (monthint < 1 or monthint > 12):      # Checks if inputted integer is between 1 and 12
@@ -183,11 +190,10 @@ def main():
         day = int(float(input("Input valid day: ")))
     while((monthint==9 or monthint==4 or monthint==6 or monthint==11)and day > 30):
         day = int(float(input("Input valid day: ")))
-
-    # Prompts the user for the year
-    inpt_year = int(float(input("Year: ")))
-    while (inpt_year < current_year()):
-        inpt_year = int(float(input("Input valid year: ")))
+    while((monthint==2 and isLeapYear(inpt_year) == True) and day>29):
+        day = int(float(input("Input valid day: ")))
+    while((monthint==2 and isLeapYear(inpt_year) == False) and day>28):
+        day = int(float(input("Input valid day: ")))
 
     time = str(input("12 hr time (hr:mn): "))
     
