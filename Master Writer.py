@@ -11,7 +11,7 @@ import TelescopePointer as TP
 import TimeAndDataPoints as TDP
 import FileDictionary2 as FD
 import ActualWriterTM as AWTM
-def Main():
+def Mainn():
     '''
     Main function that has all the needed functions in it
     starts user interface
