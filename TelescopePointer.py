@@ -4,8 +4,6 @@ Created on Wed Feb 13 19:40:00 2019
 
 @author: Brandon Staton
 """
-# Figure out wtf to do with this 'global' list
-
 def pointatobject(dictionary):
     '''
     takes a dictionary and adds various objects per user's input 
@@ -13,13 +11,14 @@ def pointatobject(dictionary):
     name/coordinates as the key
     '''
     print("Allowed inputs are 'listed' or 'coordinates' ")
-    l_or_c = input("Listed Object or Coordinates? ")    #Dont make user input entire word
+    l_or_c = input("Listed Object or Coordinates? ")
     
     if (l_or_c.lower() == 'listed'):
         listed_object = input('Name of Object: ')
-        with open("C:/Users/Owner/Desktop/Astronomy Club Program/SRT Objects.txt",'r') as searchfile:   #Change file dir based off system
-            lines = searchfile.read().splitlines()
-        if listed_object in lines:
+        f = open('SRTObjects.txt','r')
+        content = f.read().split()
+        f.close()
+        if listed_object in content:
             print('Object added')
             dictionary.update({listed_object:'named'})
         else:
