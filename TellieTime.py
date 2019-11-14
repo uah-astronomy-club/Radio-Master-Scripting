@@ -90,9 +90,9 @@ def TellieTime(Day,Month,Year,Time,M):
                 Th=int(Time[0])+5
         else: #this should run the above if/else for double digit hours
             if isDaylightSavings(Year, Month, Day)==False: #checks for daylightsavings 
-                Th=int(Time[0:2])+18
+                Th=int(Time[0:2])+6
             else:
-                Th=int(Time[0:2])+17
+                Th=int(Time[0:2])+5
     if Th>=24: #if our time conversion has put us past midnight in universal time, we need to change the date
         Th-=24
         d+=1
