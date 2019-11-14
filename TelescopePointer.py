@@ -25,6 +25,7 @@ def pointatobject(dictionary):
             print('Object not included in the SRT directory.')
     
     elif (l_or_c.lower() == "coordinates"):
+        print("Allowed inputs are 'gal' or 'azel'")
         g_or_a = input("Gal or Azel coordinates? ")
         while True:
             if (g_or_a.lower() == 'gal'):
@@ -37,6 +38,7 @@ def pointatobject(dictionary):
                         break
                     else:
                         print('Invalid Input - #todo: add sassy comment')
+                        print('Galactic Longitude is a value between 0 and 359')
                 while True:
                     gal_lon = int(float(input('Input Galactic Latitude: ')))
                     if (gal_lon>=-90 and gal_lon<=90):
@@ -51,7 +53,7 @@ def pointatobject(dictionary):
                         gal_lon = str(gal_lon)
                         break
                     else:
-                        print('Invalid Input')
+                        print('Galactic Latitude is between -90 and 90')
                 gal_coors = gal_lon + ' ' + gal_lat
                 dictionary.update({gal_coors:'Galactic'})
                 break

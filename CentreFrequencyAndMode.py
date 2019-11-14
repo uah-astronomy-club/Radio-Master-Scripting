@@ -13,16 +13,16 @@ def frequencysetter(objectlist):
     '''
     frequencydict={}
     while True:    
-        setall=input('Would you like to enter the same frequency settings for all objects you wish to observe?\nEnter yes or no.')
+        setall=input('Would you like to enter the same frequency settings for all objects you wish to observe?\nEnter yes or no. ')
         if setall.lower()=='yes':
             while True:
-                freq=input('Enter the centring frequency in MHz')
-                if not (1300<float(freq)<1800):
+                freq=input('Enter the centring frequency from 1300 to 1800 MHz: ')
+                if not (1300<=float(freq)<=1800):     # Changed to include 1300 and 1800 MHz
                     print("That's outside the telescope's measuring range of 1300-1800 MHz" )
                 else:
                     break
             while True:   
-                mode=input('Enter the mode you want to observe in')
+                mode=input('Enter the mode (1,2,3,4) you want to observe in: ')
                 List=[1,2,3,4]
                 if int(mode) not in List:
                     print('That is not a valid observing mode! Maybe you should stick to binoculars...')
@@ -34,13 +34,13 @@ def frequencysetter(objectlist):
             for thing in objectlist.keys():
                 print("Current object:"+thing)#note that this expects the key to be a string
                 while True:
-                    currentfreq=input('What centring frequency do you want for the current object?')
-                    if not (1300<float(currentfreq)<1800):
+                    currentfreq=input('Enter the centring frequency for the current object from 1300 to 1800 MHz: ')
+                    if not (1300<=float(currentfreq)<=1800):
                         print("That's outside the telescope's measuring range of 1300-1800 MHz.")
                     else:
                         break
                 while True:
-                    currentmode=input('Enter the mode you want to observe in')
+                    currentmode=input('Enter the mode (1,2,3,4) you want to observe in: ')
                     List=[1,2,3,4]
                     if int(currentmode) not in List:
                         print('That is not a valid observing mode! Maybe you should stick to binoculars...')
