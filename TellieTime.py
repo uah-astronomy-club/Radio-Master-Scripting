@@ -177,8 +177,14 @@ def current_day():
     time_now=datetime.now()
     current_day=int(time_now.day)
     return current_day
+def current_time():
+    time_now=datetime.now()
+    current_hr = int(time_now.hour)
+    current_min =int(time_now.minute)
+    return current_hr, current_min
 # Makes values easier to enter for the user
 def main():
+    time_conflict=False
     print("Input the following information about your observation")
     
     # Prompts the user for the year
@@ -192,7 +198,8 @@ def main():
         monthint = int(float(input("Input Valid Month: ")))
     while (monthint<current_month()):
         monthint=int(float(input("Input Future Month:")))
-    # Gets the day of the month and does simple error handeling
+        
+    # Gets the day of the month and does error handeling
     day = int(float(input("Day of the Month: ")))
     while (day < 1 or day > 31):
         day = int(float(input("Input valid day: ")))
@@ -204,17 +211,77 @@ def main():
         day = int(float(input("Input valid day: ")))
     while(day<current_day() and monthint==current_month()):
         day=int(float(input("Input Future Day: ")))
-    time = str(input("12 hr time (hr:mn): "))
     
+    # User-inputted time of observation    
+    time = str(input("12 hr time (hr:mn): "))
     AM_PM = str(input("AM or PM (all caps): "))
-    print(" ")
-    date=TellieTime(day,monthint,inpt_year,time,AM_PM)
-    print(" ")
-
+    while(not(AM_PM == 'AM' or AM_PM =='PM')):
+          print('Invalid input.')
+          AM_PM = str(input("AM or PM (all caps): "))
+    curr_hr, curr_min = current_time()
+    obs_hr = int(time.split(':')[0])
+    # When obs occurs at 12 am, make obs_hr for later error checking
+    if(obs_hr == 12 and AM_PM == 'AM'):
+        obs_hr == 0
+    # Adjust the time to be used for error checking
+    if(AM_PM=='PM'):
+        obs_hr = obs_hr + 12
+        if(obs_hr == 24):
+            obs_hr = 12
+    
+    # time input error checking
+    obs_min = int(time.split(':')[1])
+    while((obs_hr > 12 or obs_hr < 0) or (obs_min < 0 or obs_min > 59)):
+        print('Invalid Input')
+        time = str(input("12 hr time (hr:mn): "))
+        AM_PM = str(input("AM or PM (all caps): "))
+        while(not(AM_PM == 'AM' or AM_PM =='PM')):
+          print('Invalid input.')
+          AM_PM = str(input("AM or PM (all caps): "))
+        curr_hr, curr_min = current_time()
+        obs_hr = int(time.split(':')[0])
+        # When obs occurs at 12 am, make obs_hr for later error checking
+        if(obs_hr == 12 and AM_PM == 'AM'):
+            obs_hr == 0
+            # Adjust the time to be used for error checking
+        if(AM_PM=='PM'):
+            obs_hr = obs_hr + 12
+        if(obs_hr == 24):
+            obs_hr = 12
+        obs_min = int(time.split(':')[1])
+            
+    # From inputted time minute, create vars that are 5 mins before and after
+    if(obs_min > 54):
+        obs_min_check_high = 59
+    else:
+        obs_min_check_high = obs_min + 5
+    
+    # checks if the inputted hr:mn conflicts with current hr:mn 
+    if(curr_min <= obs_min_check_high and curr_hr >= obs_hr):
+        time_conflict=True
+    
+    # notifies user thier prefered observation may have already passed
+    if(time_conflict == True and monthint==current_month() and day==current_day()):
+        print('Observation time may have already passed')
+        print('Override and continue with values?')
+        override = input('Y or N: ')
+        while(not(override == 'Y' or override =='N')):
+          print('Invalid input. Override error and continue with values?')
+          override = input('Y or N: ')
+        if(override == 'Y'):
+            date=TellieTime(day,monthint,inpt_year,time,AM_PM)
+            return date
+        else:
+            main()
+    
+    # Does not notify user if they have inputted nonconflicting time/date    
+    if(not(time_conflict == True and monthint==current_month() and day==current_day())):
+        date=TellieTime(day,monthint,inpt_year,time,AM_PM)
+        return date
+        
 
     # Included so the program can be run in a command window without closing to quickly for user to see the result
     #end = input('Press Enter to end program')
-    return date
 # Starts Function
 if __name__ == "__main__":
     main()
