@@ -169,7 +169,14 @@ def current_year():
     time_now = datetime.now()
     current_year = int(time_now.year)
     return current_year
-
+def current_month():
+    time_now=datetime.now()
+    current_month=int(time_now.month)
+    return current_month
+def current_day():
+    time_now=datetime.now()
+    current_day=int(time_now.day)
+    return current_day
 # Makes values easier to enter for the user
 def main():
     print("Input the following information about your observation")
@@ -183,7 +190,8 @@ def main():
     monthint = int(float(input("Month Number: ")))
     while (monthint < 1 or monthint > 12):      # Checks if inputted integer is between 1 and 12
         monthint = int(float(input("Input Valid Month: ")))
-
+    while (monthint<current_month()):
+        monthint=int(float(input("Input Future Month:")))
     # Gets the day of the month and does simple error handeling
     day = int(float(input("Day of the Month: ")))
     while (day < 1 or day > 31):
@@ -194,7 +202,8 @@ def main():
         day = int(float(input("Input valid day: ")))
     while((monthint==2 and isLeapYear(inpt_year) == False) and day>28):
         day = int(float(input("Input valid day: ")))
-
+    while(day<current_day() and monthint==current_month()):
+        day=int(float(input("Input Future Day: ")))
     time = str(input("12 hr time (hr:mn): "))
     
     AM_PM = str(input("AM or PM (all caps): "))
