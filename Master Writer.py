@@ -29,4 +29,5 @@ def Main():
     print(timerdict)
     print(filenamesdict)
     AWTM.ActualWriterTM(date, objectdict, freqdict, timerdict, filenamesdict)
-    return 
+    return
+Main()

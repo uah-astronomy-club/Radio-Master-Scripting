@@ -12,7 +12,8 @@ def pointatobject(dictionary):
     marks the type of input (named,azel, or gal) as the value and the object 
     name/coordinates as the key
     '''
-    l_or_c = input("Listed object or Coordinates? ")    #Dont make user input entire word
+    print("Allowed inputs are 'listed' or 'coordinates' ")
+    l_or_c = input("Listed Object or Coordinates? ")    #Dont make user input entire word
     
     if (l_or_c.lower() == 'listed'):
         listed_object = input('Name of Object: ')
