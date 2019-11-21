@@ -40,7 +40,8 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
                 cmdfile.write(': azel'+Object+'\n')#check to make sure this comes out in the correct format
             n=Filenames[Object]
             cmdfile.write(": record"+' '+n+".rad\n")
-            if Times[Object]=='all':
+            t=Times.keys()
+            if 'all' in t:
                 s=Times['all']
                 s=s.split()
                 i=s.index(',')
