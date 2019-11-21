@@ -222,12 +222,12 @@ def main():
     obs_hr = int(time.split(':')[0])
     # When obs occurs at 12 am, make obs_hr for later error checking
     if(obs_hr == 12 and AM_PM == 'AM'):
-        obs_hr == 0
+        obs_hr_adj == 0
     # Adjust the time to be used for error checking
     if(AM_PM=='PM'):
-        obs_hr = obs_hr + 12
+        obs_hr_adj = obs_hr + 12
         if(obs_hr == 24):
-            obs_hr = 12
+            obs_hr_adj = 12
     
     # time input error checking
     obs_min = int(time.split(':')[1])
@@ -242,12 +242,12 @@ def main():
         obs_hr = int(time.split(':')[0])
         # When obs occurs at 12 am, make obs_hr for later error checking
         if(obs_hr == 12 and AM_PM == 'AM'):
-            obs_hr == 0
+            obs_hr_adj == 0
             # Adjust the time to be used for error checking
         if(AM_PM=='PM'):
-            obs_hr = obs_hr + 12
+            obs_hr_adj = obs_hr + 12
         if(obs_hr == 24):
-            obs_hr = 12
+            obs_hr_adj = 12
         obs_min = int(time.split(':')[1])
             
     # From inputted time minute, create vars that are 5 mins before and after
@@ -257,7 +257,7 @@ def main():
         obs_min_check_high = obs_min + 5
     
     # checks if the inputted hr:mn conflicts with current hr:mn 
-    if(curr_min <= obs_min_check_high and curr_hr >= obs_hr):
+    if(curr_min <= obs_min_check_high and curr_hr >= obs_hr_adj):
         time_conflict=True
     
     # notifies user thier prefered observation may have already passed
