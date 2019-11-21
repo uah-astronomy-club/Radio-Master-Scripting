@@ -14,16 +14,20 @@ def pointatobject(dictionary):
     l_or_c = input("Listed Object or Coordinates? ")
     
     if (l_or_c.lower() == 'listed'):
-        listed_object = input('Name of Object: ')
-        f = open('SRTObjects.txt','r')
-        content = f.read().split()
-        f.close()
-        if listed_object in content:
-            print('Object added')
-            dictionary.update({listed_object:'named'})
-        else:
-            print('Object not included in the SRT directory.')
-    
+        listed=1
+        while listed:
+            
+            listed_object = input('Name of Object: ')
+            f = open('SRTObjects.txt','r')
+            content = f.read().split()
+            f.close()
+            if listed_object in content:
+                print('Object added')
+                dictionary.update({listed_object:'named'})
+                listed=0
+            else:
+                print('Object not included in the SRT directory.')
+            
     elif (l_or_c.lower() == "coordinates"):
         print("Allowed inputs are 'gal' or 'azel'")
         g_or_a = input("Gal or Azel coordinates? ")
