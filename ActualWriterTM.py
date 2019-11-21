@@ -43,13 +43,11 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
             t=Times.keys()
             if 'all' in t:
                 s=Times['all']
-                s=s.split()
-                i=s.index(',')
-                for c in range(i):
-                    time+=c
-                cmdfile.write(": "+time+'\n')
+                s=s.split(',')
+                inter=s[0]
+                cmdfile.write(": "+inter+'\n')
             else:
-                s=Times['all']
+                s=Times[Object]
                 s=s.split()
                 i=s.index(',')
                 for c in range(i):
