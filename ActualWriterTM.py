@@ -53,7 +53,7 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
                 for c in range(i):
                     time+=c
                 cmdfile.write(":"+time+'\n')
-            cmdfile.write(": roff")
+            cmdfile.write(": roff\n")
     #for object
     #set freq and mode 
     #point at the object
