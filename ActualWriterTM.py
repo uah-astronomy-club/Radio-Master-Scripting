@@ -18,17 +18,15 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
         for Object in Objects.keys():
             freq=0#initiates var
             mode=0
-            time=0
             f=Frequencies.keys()
             if 'all' in f:
                 s=Frequencies['all']
-                print(s)
                 s=s.split(',')
                 freq=s[0]
                 mode=s[1]
             else:
                 s=Frequencies[Object]
-                s=s.split()
+                s=s.split(',')
                 freq=s[0]
                 mode=s[1]
             cmdfile.write(': freq '+freq+' '+mode+'\n')
@@ -45,14 +43,12 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
                 s=Times['all']
                 s=s.split(',')
                 inter=s[0]
-                cmdfile.write(": "+inter+'\n')
+                cmdfile.write(":"+inter+'\n')
             else:
                 s=Times[Object]
-                s=s.split()
-                i=s.index(',')
-                for c in range(i):
-                    time+=c
-                cmdfile.write(":"+time+'\n')
+                s=s.split(',')
+                inter=s[0]
+                cmdfile.write(":"+inter+'\n')
             cmdfile.write(": roff\n")
         cmdfile.write(": stow")
     #for object
