@@ -31,30 +31,30 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
                 s=s.split()
                 freq=s[0]
                 mode=s[1]
-            cmdfile.write(': freq'+freq+' '+mode+'\n')
+            cmdfile.write(': freq '+freq+' '+mode+'\n')
             if Objects[Object]=='named':
                 cmdfile.write(': '+Object+'\n')
             elif Objects[Object]=='Galactic':
-                cmdfile.write(': galactic'+Object+'\n')#check to make sure this comes out in the correct format
+                cmdfile.write(': galactic '+Object+'\n')#check to make sure this comes out in the correct format
             elif Objects[Object]=='Azel':
-                cmdfile.write(': azel'+Object+'\n')#check to make sure this comes out in the correct format
+                cmdfile.write(': azel '+Object+'\n')#check to make sure this comes out in the correct format
             n=Filenames[Object]
             cmdfile.write(": record"+' '+n+".rad\n")
-            if Times[Object]=='all':
+            t=Times.keys()
+            if 'all' in t:
                 s=Times['all']
-                s=s.split()
-                i=s.index(',')
-                for c in range(i):
-                    time+=c
-                cmdfile.write(": "+time+'\n')
+                s=s.split(',')
+                inter=s[0]
+                cmdfile.write(": "+inter+'\n')
             else:
-                s=Times['all']
+                s=Times[Object]
                 s=s.split()
                 i=s.index(',')
                 for c in range(i):
                     time+=c
                 cmdfile.write(":"+time+'\n')
-            cmdfile.write(": roff")
+            cmdfile.write(": roff\n")
+        cmdfile.write(": stow")
     #for object
     #set freq and mode 
     #point at the object

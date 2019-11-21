@@ -13,7 +13,7 @@ def filenames(objectdict):
     '''
     filenamesdict={}
     while True:
-        dictoryname=input("Enter the file directory to write the .cmd files to")
+        dictoryname=input("Enter the file directory to write the .cmd files to (don't need '' or "")")
         filenamesdict.update({'directoryname':dictoryname})
         cmdname=input("Enter the name for the .cmd file")
         filenamesdict.update({'filename':cmdname})
