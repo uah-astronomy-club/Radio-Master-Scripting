@@ -17,12 +17,14 @@ def pointatobject(dictionary):
         listed=1
         while listed:
             
-            listed_object = input('Name of Object: ')
+            listed_object = input("Input object name or 'list' for SRT known objects: ")
             f = open('SRTObjects.txt','r')
             content = f.read().split()
             f.close()
             contentlower = [item.lower() for item in content]
-            if listed_object.lower() in contentlower:
+            if listed_object == 'list':
+                print('\n',*content,sep='\n')
+            elif listed_object.lower() in contentlower:
                 print('Object added')
                 dictionary.update({listed_object:'named'})
                 listed=0
