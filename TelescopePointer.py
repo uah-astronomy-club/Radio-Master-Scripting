@@ -21,7 +21,8 @@ def pointatobject(dictionary):
             f = open('SRTObjects.txt','r')
             content = f.read().split()
             f.close()
-            if listed_object in content:
+            contentlower = [item.lower() for item in content]
+            if listed_object.lower() in contentlower:
                 print('Object added')
                 dictionary.update({listed_object:'named'})
                 listed=0
