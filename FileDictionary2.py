@@ -13,15 +13,15 @@ def filenames(objectdict):
     '''
     filenamesdict={}
     while True:
-        dictoryname=input("Enter the file directory to write the .cmd files to (don't need '' or "")")
+        dictoryname=input("Enter the file directory to write the .cmd files to (don't need '' or ""): ")
         filenamesdict.update({'directoryname':dictoryname})
-        cmdname=input("Enter the name for the .cmd file")
+        cmdname=input("Enter the name for the .cmd file: ")
         filenamesdict.update({'filename':cmdname})
         break
     for thing in objectdict:
         while True:
             print('Current object'+thing)
-            objectstr=input('Enter what you want the .rad file for the current object to be named')
+            objectstr=input('Enter what you want the .rad file for the current object to be named: ')
             #need fix to prevent spaces 
             try:
                 objectstr=str(objectstr)

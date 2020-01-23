@@ -13,7 +13,7 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
     writes the .cmd file in the proper formatting 
     '''
     
-    with open(Filenames['directoryname']+'\\'+Filenames['filename']+'.txt','w+') as cmdfile:   
+    with open(Filenames['directoryname']+'/'+Filenames['filename']+'.txt','w+') as cmdfile:   
         cmdfile.write(Date+'\n')
         for Object in Objects.keys():
             freq=0#initiates var
