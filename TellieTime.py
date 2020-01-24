@@ -222,7 +222,7 @@ def main():
     obs_hr = int(time.split(':')[0])
     # When obs occurs at 12 am, make obs_hr for later error checking
     if(obs_hr == 12 and AM_PM == 'AM'):
-        obs_hr_adj == 0
+        obs_hr_adj = 0
     # Adjust the time to be used for error checking
     if(AM_PM=='PM'):
         obs_hr_adj = obs_hr + 12
@@ -242,7 +242,7 @@ def main():
         obs_hr = int(time.split(':')[0])
         # When obs occurs at 12 am, make obs_hr for later error checking
         if(obs_hr == 12 and AM_PM == 'AM'):
-            obs_hr_adj == 0
+            obs_hr_adj = 0
             # Adjust the time to be used for error checking
         if(AM_PM=='PM'):
             obs_hr_adj = obs_hr + 12
