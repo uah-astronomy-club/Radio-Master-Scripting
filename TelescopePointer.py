@@ -97,6 +97,7 @@ def pointatobject(dictionary):
         new_obj = input('Another object? (Y/N) ')
         if(new_obj.lower() == 'y'):
             pointatobject(dictionary)
+            #TODO - ask user what time the new objects want to be observed
             break
         elif(new_obj.lower() == 'n'):   # Sometimes you have to say no twice for program to end. IDK how to fix right now
             #print(dictionary)

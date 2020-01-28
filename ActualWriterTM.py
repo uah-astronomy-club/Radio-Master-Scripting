@@ -12,7 +12,8 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
     formatting is assumed to be like:
     writes the .cmd file in the proper formatting 
     '''
-    
+    #TODO - Sort by soonest to be observed to latest before writting cmd file
+    #TODO - if time between last data point of object n and start of data collecting for n+1 is >20 mins, stow telecope
     with open(Filenames['directoryname']+'/'+Filenames['filename']+'.txt','w+') as cmdfile:   
         cmdfile.write(Date+'\n')
         for Object in Objects.keys():
@@ -43,7 +44,7 @@ def ActualWriterTM(Date,Objects,Frequencies,Times,Filenames):
                 s=Times['all']
                 s=s.split(',')
                 inter=s[0]
-                cmdfile.write(":"+inter+'\n')
+                cmdfile.write(": "+inter+'\n')
             else:
                 s=Times[Object]
                 s=s.split(',')
