@@ -16,8 +16,8 @@ def frequencysetter(objectlist):
         setall=input('Would you like to enter the same frequency settings for all objects you wish to observe?\nEnter yes or no. ')
         if setall.lower()=='yes':
             while True:
-                freq=input('Enter the centring frequency in MHz from 1300 to 1800 MHz: ')
-                if not (1300<=float(freq)<=1800):     # Changed to include 1300 and 1800 MHz
+                freq=input('Enter the centring frequency in MHz from 1301 to 1799 MHz: ')
+                if not (1300<float(freq)<1800):     # Changed to include 1300 and 1800 MHz
                     print("That's outside the telescope's measuring range of 1300-1800 MHz" )
                 else:
                     break

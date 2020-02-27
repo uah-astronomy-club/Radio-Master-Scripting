@@ -14,10 +14,10 @@ def timeranddatapoints(objectlist):
     '''
     timeanddatapointsdict={}
     while True:    
-        setall=input('Would you like to enter the same integration settings for all objects you wish to observe?\nEnter yes or no.')
+        setall=input('Would you like to enter the same integration settings for all objects you wish to observe?\nEnter yes or no: ')
         if setall.lower()=='yes':
             while True:
-                p=input("what would you like the integration period to be (in seconds)?")
+                p=input("What would you like the integration period to be (in seconds): ")
                 try: 
                     p=int(p)
                     if p<1:
@@ -27,7 +27,7 @@ def timeranddatapoints(objectlist):
                 except ValueError:
                     print("You need to enter an integer, come on-it's as easy as 1,2,3.")            
             while True:
-                cp=input("how often do you want to calibrate the telescope (in seconds)?")
+                cp=input("how often do you want to calibrate the telescope (in seconds): ")
                 try: 
                     cp=int(cp)
                     if cp<1:
@@ -43,7 +43,7 @@ def timeranddatapoints(objectlist):
             for thing in objectlist.keys():
                 print('Current object:'+thing)
                 while True:
-                    p=input("what would you like the integration period to be (in seconds)?")
+                    p=input("what would you like the integration period to be (in seconds): ")
                     try: 
                         p=int(p)
                         if p<1:
@@ -53,11 +53,11 @@ def timeranddatapoints(objectlist):
                     except ValueError:
                         print("You need to enter an integer, come on-it's as easy as 1,2,3.")
                 while True:
-                    cp=input("how often do you want to calibrate the telescope (in seconds)?")
+                    cp=input("how often do you want to calibrate the telescope (in seconds): ")
                     try: 
                         p=int(cp)
                         if p<1:
-                            print('Negative time? NEGATIVE TIME? Really? REALLY? Like, are you sure you want to work in a STEM field?')
+                            print('Negative time? NEGATIVE TIME? Really? REALLY? Like, are you sure you want to work in a STEM field: ')
                         else:
                             break
                     except ValueError:
