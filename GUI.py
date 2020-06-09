@@ -11,7 +11,7 @@ from datetime import datetime
 from intvalidate import int_validate
 root=Tk()
 root.title('UAH Astronomy Club')
-# root.geometry('500x500')
+root.iconbitmap('icon.ico')
 
 #------------------------------------------------------------------------------
 # Object Info
@@ -182,17 +182,19 @@ second = Spinbox(date_time_frame, from_=00, to = 59, width = 3, format="%02.0f",
 int_validate(second, limits = (00,59))
 second.grid(row = 1, column = 3)
 
+# Gets if user selected AM or PM
 def am_pm_selected(event):
     am_pm_value = am_pm.get()
-    print(am_pm_value)
 
-
+# AM PM dropdown menu
 am_pm = ttk.Combobox(date_time_frame, value=['AM', 'PM'], state = 'readonly', width = 3)
 am_pm.current(am_pm_default)
 am_pm.bind('<<ComboboxSelected>>',am_pm_selected)
 am_pm.grid(row = 1, column = 4, padx=10, columnspan = 3)
 
+# Validates if the inputted time has passed or not
 def time_validator(obs_date, hr, mn, sec, am_pm):
+    time_now = datetime.now()
     inputted_date_int = [0,0,0]
     inputted_date = obs_date.split('/')
     global time_valid
@@ -219,15 +221,16 @@ def time_validator(obs_date, hr, mn, sec, am_pm):
                             time_valid = False
                             print(time_valid)
     return time_valid
-    
-    
-    
+
 
 #------------------------------------------------------------------------------
 # Confirm and exit buttons
+
+# popup error window if inputted time is not valid
 def error_time():
     messagebox.showwarning('Error','Inputted Time is not Valid.')
 
+# What to do when the confirm button is clicked
 def confirm_click():
     obs_date = cal.get_date()
     obs_date = str(obs_date)
@@ -238,14 +241,13 @@ def confirm_click():
     validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
     if validation == False:
         error_time()
-        
-    
-    print(obs_date)
-    
+
+# Confirm button
 confirm_button = Button(root, text = 'Confirm', command = confirm_click)
 confirm_button.grid(row = 999, column = 998)
 
 
+# Exit button
 exit_button = Button(root, text = 'Exit', command = root.destroy)
 exit_button.grid(row = 999, column = 999)
 
@@ -255,4 +257,6 @@ mainloop()
 Things to add:
     Clock with the current time at the top of this program
     Remove print statements
+    
+    Filepath
 '''
