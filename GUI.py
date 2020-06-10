@@ -9,6 +9,7 @@ from tkinter import ttk
 from tkcalendar import *
 from datetime import datetime
 from intvalidate import int_validate
+import tkinter.scrolledtext as tkst
 import sys
 import time
 import os
@@ -176,9 +177,11 @@ if current_hr == 0:
     am_pm_default = 0
 elif current_hr == 12:
     am_pm_default = 1
-else:
+elif current_hr > 12:
     current_hr = current_hr - 12
     am_pm_default = 1
+else:
+    am_pm_default = 0
 
 date_time_frame = LabelFrame(root, text = 'Date and Time of Observation', 
                              padx = 5, pady=5)
@@ -344,9 +347,19 @@ Notification_frame = LabelFrame(root, text = 'Notifications', padx = 5,
                                 pady = 5)
 Notification_frame.grid(row = 0, column = 3, padx = 10, pady = 10, rowspan = 3,
                         columnspan = 3)
-Notifications = Entry(Notification_frame, state = 'disabled')
-Notifications.pack(ipadx = 50, ipady = 300)
 
+Notifications = tkst.ScrolledText(Notification_frame, width = 35, height = 37)
+Notifications.pack()
+# Notifications = Entry(Notification_frame)
+Notifications.insert(INSERT,'Developed by Brandon Staton')
+Notifications.insert(INSERT,'\nfor the UAH Astronomy Club')
+Notifications.insert(INSERT, '\n\nThis program is a work in progress')
+Notifications.insert(INSERT, '\n-----------------------------------\n')
+Notifications.config(state = 'disabled')
+# Notifications.pack(ipadx = 50, ipady = 300)
+
+# Added [object] to [cmd file name]
+# Added observation to [cmd file name]
 
 #------------------------------------------------------------------------------
 # Confirm and exit buttons
@@ -366,6 +379,9 @@ def confirm_click():
     validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
     if validation == False:
         error_time()
+        Notifications.config(state = 'normal')
+        Notifications.insert(INSERT, '\nError')
+        Notifications.config(state = 'disabled')
     # Send notifcation to notification box
 
 def Finalize():
