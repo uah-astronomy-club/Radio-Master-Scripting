@@ -6,6 +6,7 @@ Created on Mon Jun  8 22:33:48 2020
 """
 from tkinter import *
 from tkinter import ttk
+from tkinter import filedialog
 from tkcalendar import *
 from datetime import datetime
 from intvalidate import int_validate
@@ -75,9 +76,9 @@ Bt2 = Radiobutton(object_frame, text = 'Azel Coordinates', variable = object_inp
 Bt3 = Radiobutton(object_frame, text = 'Gal Coordinates', variable = object_input_method, 
                   value = 3, command = lambda: btclicked(object_input_method.get()))
 
-Bt1.grid(row = 0, column = 0, sticky = W)
-Bt2.grid(row = 1, column = 0, sticky = W)
-Bt3.grid(row = 2, column = 0, sticky = W)
+Bt1.grid(row = 0, column = 0, pady = 4, sticky = W)
+Bt2.grid(row = 1, column = 0, pady = 4, sticky = W)
+Bt3.grid(row = 2, column = 0, pady = 4 ,sticky = W)
 
 
 
@@ -172,16 +173,6 @@ today = datetime.today()
 
 # Default time value
 am_pm_default = 0
-if current_hr == 0:
-    current_hr = 12
-    am_pm_default = 0
-elif current_hr == 12:
-    am_pm_default = 1
-elif current_hr > 12:
-    current_hr = current_hr - 12
-    am_pm_default = 1
-else:
-    am_pm_default = 0
 
 date_time_frame = LabelFrame(root, text = 'Date and Time of Observation', 
                              padx = 5, pady=5)
@@ -198,23 +189,24 @@ time_text.grid(row = 1, column = 0)
 
 # hour picker
 hr_default = StringVar(root)
-hr_default.set(current_hr)
-hr = Spinbox(date_time_frame, from_=1, to=12, width = 3, textvariable = hr_default)
+hr_default.set(12)
+hr = Spinbox(date_time_frame,from_=1, to=12, width = 3, 
+             textvariable = hr_default, wrap=True)
 hr.grid(row = 1, column = 1)
 
 # minute picker
 min_default = StringVar(root)
-min_default.set(current_min)
+min_default.set(00)
 minute = Spinbox(date_time_frame, from_ = 00, to=59, width = 3, format="%02.0f",
-                 textvariable = min_default)
+                 textvariable = min_default, wrap=True)
 int_validate(minute, limits = (00,59))
 minute.grid(row = 1, column = 2)
 
 # second picker
 sec_default = StringVar(root)
-sec_default.set(current_sec)
+sec_default.set(00)
 second = Spinbox(date_time_frame, from_=00, to = 59, width = 3, format="%02.0f",
-                 textvariable = sec_default)
+                 textvariable = sec_default, wrap=True)
 int_validate(second, limits = (00,59))
 second.grid(row = 1, column = 3)
 
@@ -235,7 +227,7 @@ def time_validator(obs_date, hr, mn, sec, am_pm):
     inputted_date = obs_date.split('/')
     global time_valid
     time_valid = True
-    if am_pm == "PM":
+    if am_pm == "PM" and hr != 12:
         hr = hr + 12
     if am_pm == 'AM' and hr == 12:
         hr = 0
@@ -280,7 +272,7 @@ def freq_box_create():
     global frequency_box    
     frequency_box = Spinbox(Integration_frame, from_= 1301, to = 1799, width = 5)
     frequency_box.bind('<FocusOut>', freq_validate)
-    frequency_box.grid(column = 1, row = 0)   
+    frequency_box.grid(column = 1, row = 0, pady = 3)   
 
 # initilizing center frequency input field
 freq_box_create()
@@ -291,7 +283,7 @@ frequency_unit.grid(column = 2, row = 0)
 
 # Observation Mode
 obs_mode_text = Label(Integration_frame, text = 'Observation Mode: ')
-obs_mode_text.grid(column =0 , row = 1)
+obs_mode_text.grid(column =0 , row = 1, pady = 3)
 
 
 def obs_selected(event):
@@ -304,14 +296,14 @@ obs_mode_value = ttk.Combobox(Integration_frame, value = [1, 2, 3, 4],
                               state = 'readonly', width = 3)
 obs_mode_value.current(0)
 obs_mode_value.bind('<<ComboboxSelected>>',obs_selected)
-obs_mode_value.grid(column = 1, row = 1)
+obs_mode_value.grid(column = 1, row = 1, pady = 3)
 
 # Integration time
 integration_time_text = Label(Integration_frame, text = 'Integration Time: ')
 integration_time_text.grid(row = 2, column = 0)
 integration_time_box = Spinbox(Integration_frame, from_= 1, to = 99999, width = 5)
 int_validate(integration_time_box, limits = (1,99999))
-integration_time_box.grid(column = 1, row = 2)
+integration_time_box.grid(column = 1, row = 2, pady = 3)
 integration_time_units = Label(Integration_frame, text = ' Second(s)')
 integration_time_units.grid(column = 2, row = 2)
 
@@ -323,7 +315,7 @@ calibration_time_text = Label(Integration_frame,
 calibration_time_text.grid(row = 3, column = 0)
 calibration_time_box = Spinbox(Integration_frame, from_= 1, to = 99999, width = 5)
 int_validate(calibration_time_box, limits = (1,99999))
-calibration_time_box.grid(column = 1, row = 3)
+calibration_time_box.grid(column = 1, row = 3, pady = 3)
 calibration_time_units = Label(Integration_frame, text = ' Second(s)')
 calibration_time_units.grid(column = 2, row = 3)
 
@@ -333,12 +325,40 @@ calibration_time_units.grid(column = 2, row = 3)
 File_info_frame = LabelFrame(root, text = 'File Information', padx = 5,
                              pady = 5)
 File_info_frame.grid(row = 2, column = 1, padx = 10, pady = 10)
-temporary = Label(File_info_frame)
-temporary.pack()
 
-# Default file path
-# .cmd file name
-# .rad file name
+def browse_directory():
+    global folder_path
+    filename = filedialog.askdirectory()
+    if str(filename) != '':
+        file_directory.config(state = NORMAL)
+        file_directory.delete(0,END)
+        file_directory.insert(END, str(filename))
+        file_directory.config(state = DISABLED)
+
+file_path_text = Label(File_info_frame, text = 'Directory of File Output: ')
+file_path_text.grid(column = 0, row = 0)
+folder_path = os.getcwd()
+file_directory = Entry(File_info_frame)
+file_directory.insert(END, str(folder_path))
+file_directory.config(state = DISABLED)
+file_directory.grid(column = 0, row = 1, ipadx = 100, columnspan = 3)
+file_browse_button = Button(File_info_frame, text = 'Browse', 
+                            command = browse_directory)
+file_browse_button.grid(column = 4, row = 1, padx = 5)
+
+spacer_text = Label(File_info_frame, text = ' ')
+spacer_text.grid(row = 2, column = 0)
+
+cmd_file_name_text = Label(File_info_frame, text = 'Command File Name: ')
+cmd_file_name_text.grid(column = 0, row = 3)
+cmd_file_name = Entry(File_info_frame)
+cmd_file_name.grid(row = 3, column = 1)
+
+rad_file_name_text = Label(File_info_frame, text = 'RAD File Name: ')
+rad_file_name_text.grid(column = 0, row = 4)
+rad_file_name = Entry(File_info_frame)
+rad_file_name.grid(row = 4, column = 1)
+
 
 #------------------------------------------------------------------------------
 # Notification Box
@@ -350,16 +370,60 @@ Notification_frame.grid(row = 0, column = 3, padx = 10, pady = 10, rowspan = 3,
 
 Notifications = tkst.ScrolledText(Notification_frame, width = 35, height = 37)
 Notifications.pack()
-# Notifications = Entry(Notification_frame)
 Notifications.insert(INSERT,'Developed by Brandon Staton')
 Notifications.insert(INSERT,'\nfor the UAH Astronomy Club')
 Notifications.insert(INSERT, '\n\nThis program is a work in progress')
 Notifications.insert(INSERT, '\n-----------------------------------\n')
 Notifications.config(state = 'disabled')
-# Notifications.pack(ipadx = 50, ipady = 300)
 
 # Added [object] to [cmd file name]
 # Added observation to [cmd file name]
+
+#------------------------------------------------------------------------------
+# Validation Functions
+global error_string
+error_string = ''
+
+def cmd_file_validation():
+    nammed_cmd_file = str(cmd_file_name.get())
+    valid = True
+    if nammed_cmd_file == '':
+        valid = False
+    else:
+        if nammed_cmd_file[0].isspace():
+            valid = False
+    if '.' in nammed_cmd_file:
+        valid = False
+    if '<' in nammed_cmd_file:
+        valid = False
+    if '>' in nammed_cmd_file:
+        valid = False
+    if ':' in nammed_cmd_file:
+        valid = False
+    if '"' in nammed_cmd_file:
+        valid = False
+    if '/' in nammed_cmd_file:
+        valid = False
+    if "\\" in nammed_cmd_file:
+        valid = False
+    if '|' in nammed_cmd_file:
+        valid = False
+    if '?' in nammed_cmd_file:
+        valid = False
+    if '*' in nammed_cmd_file:
+        valid = False
+    # check if there is already a command file named that
+    return valid
+
+def rad_file_validation():
+    # if file name blank, error
+    # check if there is already a rad file named that
+    # check if inputted name has a period
+    # check if inputted name has any characters that cannot be used
+    # Return True if valid, false if not
+    valid = True
+    return valid
+    
 
 #------------------------------------------------------------------------------
 # Confirm and exit buttons
@@ -369,7 +433,11 @@ def error_time():
     messagebox.showwarning('Error','Inputted Time is not Valid.')
 
 # What to do when the confirm button is clicked
-def confirm_click():
+global file_already_inputted
+file_already_inputted = False
+
+
+def confirm_click(file_already_inputted):
     obs_date = cal.get_date()
     obs_date = str(obs_date)
     obs_hr = int(hr.get())
@@ -377,18 +445,41 @@ def confirm_click():
     obs_sec = int(second.get())
     obs_am_pm = am_pm.get()
     validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
+    
+    if file_already_inputted == False:
+        cmd_valid = cmd_file_validation()
+        rad_valid = rad_file_validation()
+        if cmd_valid == True and rad_valid == True:
+            file_already_inputted = True
+            file_browse_button.config(state = DISABLED)
+            cmd_file_name.config(state = DISABLED)
+            rad_file_name.config(state = DISABLED)
+        else:
+            # Output Error
+            return
+    else:
+        return
+    
+    cmd_file_validation()
+    rad_file_validation()
     if validation == False:
         error_time()
         Notifications.config(state = 'normal')
         Notifications.insert(INSERT, '\nError')
         Notifications.config(state = 'disabled')
-    # Send notifcation to notification box
+        Notifications.see('end')
+    else:
+        Notifications.config(state = 'normal')
+        Notifications.insert(INSERT, '\nObject Inputted')
+        Notifications.config(state = 'disabled')
+        Notifications.see('end')
 
 def Finalize():
     return
 
 # Confirm Object button
-confirm_button = Button(root, text = 'Confirm Object', command = confirm_click)
+confirm_button = Button(root, text = 'Confirm Object',
+                        command = lambda: confirm_click(file_already_inputted))
 confirm_button.grid(row = 999, column = 3, padx = 5, pady = 5)
 
 # All objects inputted
