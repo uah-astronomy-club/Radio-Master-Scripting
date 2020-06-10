@@ -9,16 +9,48 @@ from tkinter import ttk
 from tkcalendar import *
 from datetime import datetime
 from intvalidate import int_validate
+import sys
+import time
+import os
 root=Tk()
 root.title('UAH Astronomy Club')
 root.iconbitmap('icon.ico')
+
+#-----------------------------------------------------------------------------
+# Clock Function
+
+Clock_frame = LabelFrame(root, text = 'Current Time', padx = 130, pady = 5)
+Clock_frame.grid(row = 0, column = 0, padx = 10, pady = 10, columnspan = 2)
+
+def clock():
+    clock_hour = time.strftime('%I')
+    clock_minute = time.strftime('%M')
+    clock_second = time.strftime('%S')
+    clock_am_pm = time.strftime('%p')
+    time_zone = time.strftime('%Z')
+    my_label.config(text = clock_hour + ':' + clock_minute + ':' + 
+                    clock_second + ' ' + clock_am_pm)
+    
+    my_label2.config(text = time_zone)
+
+    my_label.after(50, clock)
+
+
+my_label = Label(Clock_frame, text = '', font =('Helvetica, 48'))
+my_label2 = Label(Clock_frame, text = '')
+
+my_label.pack(pady = 20)
+my_label2.pack(pady = 20)
+
+clock()
+
 
 #------------------------------------------------------------------------------
 # Object Info
 
 # Object info frame
 object_frame = LabelFrame(root, text = 'Object Information', padx = 5, pady=5)
-object_frame.grid(row = 0, column = 0, padx=10, pady=10)
+object_frame.grid(row = 1, column = 0, padx=10, pady=10)
 
 
 # Object coordinate buttons
@@ -55,6 +87,7 @@ def selected(event):
 
 f = open('SRTObjects.txt','r')
 content = f.read().split()
+content.sort()
 f.close()
 
 clicked = StringVar()
@@ -149,7 +182,7 @@ else:
 
 date_time_frame = LabelFrame(root, text = 'Date and Time of Observation', 
                              padx = 5, pady=5)
-date_time_frame.grid(row = 1, column = 0, padx=10, pady=10)
+date_time_frame.grid(row = 2, column = 0, padx=10, pady=10)
 
 # Date picker
 cal = Calendar(date_time_frame, selectmode='day',year=current_year,month=current_month,
@@ -201,6 +234,8 @@ def time_validator(obs_date, hr, mn, sec, am_pm):
     time_valid = True
     if am_pm == "PM":
         hr = hr + 12
+    if am_pm == 'AM' and hr == 12:
+        hr = 0
     inputted_date[2] = '20'+inputted_date[2]
     inputted_date_int[0] = int(inputted_date[0])
     inputted_date_int[1] = int(inputted_date[1])
@@ -222,6 +257,96 @@ def time_validator(obs_date, hr, mn, sec, am_pm):
                             print(time_valid)
     return time_valid
 
+#------------------------------------------------------------------------------
+# Integration Settings
+Integration_frame = LabelFrame(root, text = 'Integration Settings', 
+                             padx = 5, pady=5)
+Integration_frame.grid(row = 1, column = 1, padx=10, pady=10)
+
+# Inputted frequency validater
+def freq_validate(event):
+    if int(frequency_box.get()) < 1301 or int(frequency_box.get()) > 1799:
+        freq_valid = False
+        frequency_box.grid_forget() 
+        freq_box_create()
+    else:
+        freq_valid = True
+
+# Creation of box to input frequency
+def freq_box_create():
+    global frequency_box    
+    frequency_box = Spinbox(Integration_frame, from_= 1301, to = 1799, width = 5)
+    frequency_box.bind('<FocusOut>', freq_validate)
+    frequency_box.grid(column = 1, row = 0)   
+
+# initilizing center frequency input field
+freq_box_create()
+frequency_label = Label(Integration_frame, text = 'Center Frequency: ')
+frequency_label.grid(column = 0, row = 0)
+frequency_unit = Label(Integration_frame, text = 'MHz')
+frequency_unit.grid(column = 2, row = 0)
+
+# Observation Mode
+obs_mode_text = Label(Integration_frame, text = 'Observation Mode: ')
+obs_mode_text.grid(column =0 , row = 1)
+
+
+def obs_selected(event):
+    selected_obs_mode = obs_mode_value.get()
+    print(selected_obs_mode)
+    
+obs_mode_click = StringVar()
+obs_mode_click.set(0)
+obs_mode_value = ttk.Combobox(Integration_frame, value = [1, 2, 3, 4], 
+                              state = 'readonly', width = 3)
+obs_mode_value.current(0)
+obs_mode_value.bind('<<ComboboxSelected>>',obs_selected)
+obs_mode_value.grid(column = 1, row = 1)
+
+# Integration time
+integration_time_text = Label(Integration_frame, text = 'Integration Time: ')
+integration_time_text.grid(row = 2, column = 0)
+integration_time_box = Spinbox(Integration_frame, from_= 1, to = 99999, width = 5)
+int_validate(integration_time_box, limits = (1,99999))
+integration_time_box.grid(column = 1, row = 2)
+integration_time_units = Label(Integration_frame, text = ' Second(s)')
+integration_time_units.grid(column = 2, row = 2)
+
+
+
+# Calibration Time [seconds]
+calibration_time_text = Label(Integration_frame, 
+                              text = 'Time Between Calibrations: ')
+calibration_time_text.grid(row = 3, column = 0)
+calibration_time_box = Spinbox(Integration_frame, from_= 1, to = 99999, width = 5)
+int_validate(calibration_time_box, limits = (1,99999))
+calibration_time_box.grid(column = 1, row = 3)
+calibration_time_units = Label(Integration_frame, text = ' Second(s)')
+calibration_time_units.grid(column = 2, row = 3)
+
+
+#------------------------------------------------------------------------------
+# File Info
+File_info_frame = LabelFrame(root, text = 'File Information', padx = 5,
+                             pady = 5)
+File_info_frame.grid(row = 2, column = 1, padx = 10, pady = 10)
+temporary = Label(File_info_frame)
+temporary.pack()
+
+# Default file path
+# .cmd file name
+# .rad file name
+
+#------------------------------------------------------------------------------
+# Notification Box
+
+Notification_frame = LabelFrame(root, text = 'Notifications', padx = 5,
+                                pady = 5)
+Notification_frame.grid(row = 0, column = 3, padx = 10, pady = 10, rowspan = 3,
+                        columnspan = 3)
+Notifications = Entry(Notification_frame, state = 'disabled')
+Notifications.pack(ipadx = 50, ipady = 300)
+
 
 #------------------------------------------------------------------------------
 # Confirm and exit buttons
@@ -241,22 +366,22 @@ def confirm_click():
     validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
     if validation == False:
         error_time()
+    # Send notifcation to notification box
 
-# Confirm button
-confirm_button = Button(root, text = 'Confirm', command = confirm_click)
-confirm_button.grid(row = 999, column = 998)
+def Finalize():
+    return
+
+# Confirm Object button
+confirm_button = Button(root, text = 'Confirm Object', command = confirm_click)
+confirm_button.grid(row = 999, column = 3, padx = 5, pady = 5)
+
+# All objects inputted
+Finalize_button = Button(root, text = 'Finalize', command = Finalize)
+Finalize_button.grid(row = 999, column = 4, padx = 5, pady = 5)
 
 
 # Exit button
 exit_button = Button(root, text = 'Exit', command = root.destroy)
-exit_button.grid(row = 999, column = 999)
+exit_button.grid(row = 999, column = 5, padx = 5, pady = 5)
 
 mainloop()
-
-'''
-Things to add:
-    Clock with the current time at the top of this program
-    Remove print statements
-    
-    Filepath
-'''
