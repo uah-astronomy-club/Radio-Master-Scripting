@@ -14,6 +14,8 @@ import tkinter.scrolledtext as tkst
 import sys
 import time
 import os
+import os.path
+import re
 root=Tk()
 root.title('UAH Astronomy Club')
 root.iconbitmap('icon.ico')
@@ -383,54 +385,81 @@ Notifications.config(state = 'disabled')
 # Validation Functions
 global error_string
 error_string = ''
+global cmd_file_path
+global rad_file_path
 
+# Command file name can only consist of numbers, letters, and underscores
 def cmd_file_validation():
     nammed_cmd_file = str(cmd_file_name.get())
+    cmd_file_direct = str(file_directory.get())
     valid = True
     if nammed_cmd_file == '':
+        global error_string
         valid = False
+        error_string = error_string + 'Command file name cannot be empty. \n\n'
     else:
-        if nammed_cmd_file[0].isspace():
+        if re.match('^[A-Za-z0-9_]*$', nammed_cmd_file):
+            valid = True
+            
+            global cmd_file_path
+            cmd_file_path = cmd_file_direct + '\\' + nammed_cmd_file + '.cmd'
+            
+            if os.path.isfile(cmd_file_path) == True:
+                valid = False
+                error_string = error_string + 'There is already a command file with that name.\n\n'
+            else:
+                valid = True
+
+        else:
             valid = False
-    if '.' in nammed_cmd_file:
-        valid = False
-    if '<' in nammed_cmd_file:
-        valid = False
-    if '>' in nammed_cmd_file:
-        valid = False
-    if ':' in nammed_cmd_file:
-        valid = False
-    if '"' in nammed_cmd_file:
-        valid = False
-    if '/' in nammed_cmd_file:
-        valid = False
-    if "\\" in nammed_cmd_file:
-        valid = False
-    if '|' in nammed_cmd_file:
-        valid = False
-    if '?' in nammed_cmd_file:
-        valid = False
-    if '*' in nammed_cmd_file:
-        valid = False
-    # check if there is already a command file named that
+            error_string = error_string + 'Command file name can only consist of letters, numbers, and underscores. \n\n'
     return valid
 
+
 def rad_file_validation():
-    # if file name blank, error
-    # check if there is already a rad file named that
-    # check if inputted name has a period
-    # check if inputted name has any characters that cannot be used
-    # Return True if valid, false if not
+    nammed_rad_file = str(rad_file_name.get())
+    rad_file_direct = str(file_directory.get())
     valid = True
+    if nammed_rad_file == '':
+        global error_string
+        valid = False
+        error_string = error_string + 'RAD file name cannot be empty. \n\n'
+    else:
+        if re.match('^[A-Za-z0-9_]*$', nammed_rad_file):
+            valid = True
+            
+            global rad_file_path
+            rad_file_path = rad_file_direct + '\\' + nammed_rad_file + '.rad'
+            
+            if os.path.isfile(rad_file_path) == True:
+                valid = False
+                error_string = error_string + 'There is already a RAD file with that name.\n\n'
+            else:
+                valid = True
+
+        else:
+            valid = False
+            error_string = error_string + 'RAD file name can only consist of letters, numbers, and underscores. \n\n'
     return valid
+
     
 
 #------------------------------------------------------------------------------
 # Confirm and exit buttons
 
-# popup error window if inputted time is not valid
-def error_time():
-    messagebox.showwarning('Error','Inputted Time is not Valid.')
+def Finalized_error():
+    messagebox.showwarning('Error', 'Functionality to be added later')
+
+# error window
+def error_popup():
+    global error_string
+    messagebox.showwarning('Error', error_string)
+
+# Ask if user is sure about exiting program
+def exit_popup():
+   response = messagebox.askyesno('Exit', 'Are you sure you want to exit?\n\nAny unsaved data will be lost.') 
+   if response == 1:
+       root.destroy()
 
 # What to do when the confirm button is clicked
 global file_already_inputted
@@ -438,36 +467,38 @@ file_already_inputted = False
 
 
 def confirm_click(file_already_inputted):
+    global error_string
+    global cmd_file_path
+    global rad_file_path
+    throw_error = False
+    error_string = ''
+    cmd_file_path = ''
+    rad_file_path = ''
+    
     obs_date = cal.get_date()
     obs_date = str(obs_date)
     obs_hr = int(hr.get())
     obs_min = int(minute.get())
     obs_sec = int(second.get())
     obs_am_pm = am_pm.get()
-    validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
+    time_validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
+    if time_validation == False:
+        error_string = error_string + 'Inputted time is not valid.\n\n'
+        throw_error = True
     
     if file_already_inputted == False:
         cmd_valid = cmd_file_validation()
         rad_valid = rad_file_validation()
+        
         if cmd_valid == True and rad_valid == True:
             file_already_inputted = True
             file_browse_button.config(state = DISABLED)
             cmd_file_name.config(state = DISABLED)
             rad_file_name.config(state = DISABLED)
         else:
-            # Output Error
-            return
-    else:
-        return
-    
-    cmd_file_validation()
-    rad_file_validation()
-    if validation == False:
-        error_time()
-        Notifications.config(state = 'normal')
-        Notifications.insert(INSERT, '\nError')
-        Notifications.config(state = 'disabled')
-        Notifications.see('end')
+            throw_error = True
+    if throw_error == True:
+        error_popup()
     else:
         Notifications.config(state = 'normal')
         Notifications.insert(INSERT, '\nObject Inputted')
@@ -475,7 +506,7 @@ def confirm_click(file_already_inputted):
         Notifications.see('end')
 
 def Finalize():
-    return
+    Finalized_error()
 
 # Confirm Object button
 confirm_button = Button(root, text = 'Confirm Object',
@@ -488,7 +519,7 @@ Finalize_button.grid(row = 999, column = 4, padx = 5, pady = 5)
 
 
 # Exit button
-exit_button = Button(root, text = 'Exit', command = root.destroy)
+exit_button = Button(root, text = 'Exit', command = exit_popup)
 exit_button.grid(row = 999, column = 5, padx = 5, pady = 5)
 
 mainloop()
