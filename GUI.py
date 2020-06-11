@@ -3,6 +3,31 @@
 Created on Mon Jun  8 22:33:48 2020
 
 @author: Brandon Staton
+
+This program takes user inputs and outputs a list of items to be observed along with
+each items observation settings. The output list is sorted in ascending time order
+of the user-inputted observations. The output list is formatted as follows:
+    
+    ['(directory to store files) (command file name) (rad file name)',
+     '(object 1 info)', '(object 2 info)', ...]
+    
+Each of the objects info is formatted as follows:
+    *For a listed object:
+        'year-mo-dy hr:mn:sc Listed name center_freq observation_mode integration_time calibration_time'
+        ex: '2020-06-11 20:00:00 Listed 50G 1301 1 1 0'
+        
+    *For an object with azel coordinates:
+        'year-mo-dy hr:mn:sc Azel Az:el center_freq observation_mode integration_time calibration_time'
+        ex: '2020-06-19 02:12:02 Azel 001:01 1301 1 1 0'
+        Note: az is always a 3 digit number and lon is always a 2 digit number
+        
+    *For an object with galatic coordinates:
+        'year-mo-dy hr:mn:sc Gal lat:lon center_freq observation_mode integration_time calibration_time'
+        ex: '2020-06-19 02:15:02 Gal 001:-02 1301 1 1 0'
+        Note: lat is always a 3 digit number and lon is always a 2 digit number
+    
+    Note: Months, Days, Hours, Minutes, and Seconds are always 2 digit numbers
+    
 """
 from tkinter import *
 from tkinter import ttk
@@ -11,11 +36,9 @@ from tkcalendar import *
 from datetime import datetime
 from intvalidate import int_validate
 import tkinter.scrolledtext as tkst
-import sys
 import time
 import os
 import os.path
-import re
 root=Tk()
 root.title('UAH Astronomy Club')
 root.iconbitmap('icon.ico')
@@ -126,7 +149,7 @@ az_value.grid(row = 1, column = 2)
 el_text = Label(object_frame, text = 'Elevation:')
 el_text.grid(row = 1, column = 3)
 el_value = Spinbox(object_frame, from_=0, to=90, width = 3)
-int_validate(az_value, limits = (0,90))
+int_validate(el_value, limits = (0,90))
 el_value.grid(row = 1, column = 4)
 
 # Azel and elevation input fields start disabled
@@ -224,6 +247,7 @@ am_pm.grid(row = 1, column = 4, padx=10, columnspan = 3)
 
 # Validates if the inputted time has passed or not
 def time_validator(obs_date, hr, mn, sec, am_pm):
+    # TODO - check for year, day, and month changeovers
     time_now = datetime.now()
     inputted_date_int = [0,0,0]
     inputted_date = obs_date.split('/')
@@ -315,8 +339,8 @@ integration_time_units.grid(column = 2, row = 2)
 calibration_time_text = Label(Integration_frame, 
                               text = 'Time Between Calibrations: ')
 calibration_time_text.grid(row = 3, column = 0)
-calibration_time_box = Spinbox(Integration_frame, from_= 1, to = 99999, width = 5)
-int_validate(calibration_time_box, limits = (1,99999))
+calibration_time_box = Spinbox(Integration_frame, from_= 0, to = 99999, width = 5)
+int_validate(calibration_time_box, limits = (0,99999))
 calibration_time_box.grid(column = 1, row = 3, pady = 3)
 calibration_time_units = Label(Integration_frame, text = ' Second(s)')
 calibration_time_units.grid(column = 2, row = 3)
@@ -328,18 +352,46 @@ File_info_frame = LabelFrame(root, text = 'File Information', padx = 5,
                              pady = 5)
 File_info_frame.grid(row = 2, column = 1, padx = 10, pady = 10)
 
+# ask user if they want to make selected directory the default directory
+def def_file_path_popup():
+    response = messagebox.askyesno('File Path', 'Make default file path?')
+    if response == 1:
+        global filename
+        GD = open('GUI_Defaults.txt', 'w')
+        GD.write(filename)
+        GD.close()
+
+# error handling for file path
 def browse_directory():
-    global folder_path
+    global filename
     filename = filedialog.askdirectory()
     if str(filename) != '':
         file_directory.config(state = NORMAL)
         file_directory.delete(0,END)
         file_directory.insert(END, str(filename))
         file_directory.config(state = DISABLED)
+        def_file_path_popup()
+
+# checks if the default file directory is valid
+def default_file_directory():
+    GD = open('GUI_Defaults.txt', 'r')
+    user_def_dir = GD.read()
+    GD.close()
+    if os.path.exists(user_def_dir) == False:
+        user_def_dir = os.getcwd()
+        GD = open('GUI_Defaults.txt', 'w')
+        GD.write(user_def_dir)
+        GD.close()
+        
 
 file_path_text = Label(File_info_frame, text = 'Directory of File Output: ')
 file_path_text.grid(column = 0, row = 0)
-folder_path = os.getcwd()
+
+default_file_directory()
+GD = open('GUI_Defaults.txt', 'r')
+folder_path = GD.read()
+GD.close()
+
 file_directory = Entry(File_info_frame)
 file_directory.insert(END, str(folder_path))
 file_directory.config(state = DISABLED)
@@ -378,15 +430,14 @@ Notifications.insert(INSERT, '\n\nThis program is a work in progress')
 Notifications.insert(INSERT, '\n-----------------------------------\n')
 Notifications.config(state = 'disabled')
 
-# Added [object] to [cmd file name]
-# Added observation to [cmd file name]
-
 #------------------------------------------------------------------------------
 # Validation Functions
 global error_string
 error_string = ''
 global cmd_file_path
 global rad_file_path
+global cmd_file_name_no_ext
+global rad_file_name_no_ext
 
 # Command file name can only consist of numbers, letters, and underscores
 def cmd_file_validation():
@@ -402,7 +453,10 @@ def cmd_file_validation():
             valid = True
             
             global cmd_file_path
+            global cmd_file_name_no_ext
+            cmd_file_name_no_ext = nammed_cmd_file
             cmd_file_path = cmd_file_direct + '\\' + nammed_cmd_file + '.cmd'
+            
             
             if os.path.isfile(cmd_file_path) == True:
                 valid = False
@@ -429,6 +483,8 @@ def rad_file_validation():
             valid = True
             
             global rad_file_path
+            global rad_file_name_no_ext
+            rad_file_name_no_ext = nammed_rad_file
             rad_file_path = rad_file_direct + '\\' + nammed_rad_file + '.rad'
             
             if os.path.isfile(rad_file_path) == True:
@@ -446,9 +502,14 @@ def rad_file_validation():
 
 #------------------------------------------------------------------------------
 # Confirm and exit buttons
+global output_string # List containing all output info
+output_string = []
+
+def error_time():
+    messagebox.showwarning('Error', 'Observation already occuring at that day and time')
 
 def Finalized_error():
-    messagebox.showwarning('Error', 'Functionality to be added later')
+    messagebox.showwarning('Error', 'No objects inputted')
 
 # error window
 def error_popup():
@@ -500,13 +561,155 @@ def confirm_click(file_already_inputted):
     if throw_error == True:
         error_popup()
     else:
+        object_add(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
         Notifications.config(state = 'normal')
         Notifications.insert(INSERT, '\nObject Inputted')
         Notifications.config(state = 'disabled')
         Notifications.see('end')
+        # Reset all buttons
 
 def Finalize():
-    Finalized_error()
+    global output_string
+    if len(output_string) == 0:
+        Finalized_error()
+        print('Empty')
+    else:
+        output_string.sort()
+        GD = open('GUI_Defaults.txt', 'r')
+        user_def_dir = GD.read()
+        GD.close()
+        write_file = str(user_def_dir) + ' ' + cmd_file_name_no_ext + ' ' + rad_file_name_no_ext
+        output_string.insert(0, write_file)
+        print(output_string)
+        Finalize_button.config(state = DISABLED)
+        confirm_button.config(state = DISABLED)
+        
+        Notifications.config(state = 'normal')
+        Notifications.insert(INSERT, '\nCommand file being written')
+        Notifications.config(state = 'disabled')
+        Notifications.see('end')
+    
+def object_add(date, hr, mn, sc, AP):
+    global output_string
+    current_object = ''
+    
+    # Make month and the day always 2 digits
+    inputted_date = date.split('/')
+    year = '20' + str(inputted_date[2])
+    month = inputted_date[0]
+    if int(month) < 10:
+        month = '0'+str(month)
+    else:
+        month = str(month)
+    day = inputted_date[1]
+    if int(day) < 10:
+        day = '0'+str(day)
+    else:
+        day = str(day)
+    current_object = year + '-' + month + '-' + day + ' '
+    
+    # Convert hours to 24
+    if hr == 12 and AP == 'AM':
+        hr = 0
+    if hr !=12 and AP == 'AM':
+        hr = hr
+    if hr !=12 and AP == 'PM':
+        hr = hr+12
+    if hr ==12 and AP == 'PM':
+        hr = 12
+
+    # Make minutes, hours, and seconds always 2 digits
+    if hr < 10:
+        hr = '0' + str(hr)
+    if mn < 10:
+        mn = '0' + str(mn)
+    if sc < 10:
+        sc = '0' + str(sc)
+    current_object = current_object + str(hr) + ':' + str(mn) + ':' + str(sc) + ' '
+    
+    # Determine if object defined by coordinates or name
+    if object_input_method.get() == 1:
+        selected_obj = str(objectBox.get())
+        current_object = current_object + 'Listed ' + selected_obj + ' '
+        comf_message = '\n' + str(selected_obj) + ' added to file'
+        
+    elif object_input_method.get() == 2:
+        azi = int(az_value.get())
+        if azi < 100 and azi > 9:
+            azi = '0' + str(azi)
+        elif azi < 10:
+            azi = '00' + str(azi)
+        elif azi >= 100:
+            azi = str(azi)
+        ele = int(el_value.get())
+        if ele < 10:
+            ele = '0' + str(ele)
+        elif ele > 9:
+            ele = str(ele)
+        current_object = current_object + 'Azel ' + azi + ':' + ele + ' '
+        comf_message = '\nAzel coordinates added to file'
+        
+    elif object_input_method.get() == 3:
+        lat = int(lat_value.get())
+        if lat < 10:
+            lat = '00'+ str(lat)
+        elif lat > 9 and lat < 100:
+            lat = '0' + str(lat)
+        else:
+            lat = str(lat)
+        lon = int(lon_value.get())
+        if lon < 0:
+            lon = abs(lon)
+            if lon < 10:
+                lon = '-0' + str(lon)
+            else:
+                lon = '-' + str(lon)
+        elif lon >=0 and lon < 10:
+            lon = '0' + str(lon)
+        else:
+            lon = str(lon)
+        current_object = current_object + 'Gal ' + lat + ':' + lon + ' '
+        comf_message = '\nGalactic coordinates added to file'
+        
+    # pass the center frequency to the output
+    cent_freq = frequency_box.get()
+    current_object = current_object + cent_freq + ' '
+    
+    # pass the observation mode to the output
+    observation_mode = obs_mode_value.get()
+    current_object = current_object + observation_mode + ' '
+    
+    # pass the integration time to the output
+    integration_time = integration_time_box.get()
+    current_object = current_object + integration_time + ' '
+    
+    # pass the time between calibrations to the output
+    cal_time = calibration_time_box.get()
+    current_object = current_object + cal_time
+    
+    # Show user confirmation
+    Notifications.config(state = 'normal')
+    Notifications.insert(INSERT, comf_message)
+    Notifications.config(state = 'disabled')
+    Notifications.see('end')
+    
+    # TODO - reset input fields
+    if len(output_string) == 0:
+        output_string.append(current_object)
+    else:
+        # Check if there is already an observation set for that specific time
+        date_of_my_input = current_object[0:19]
+        for i in range (len(output_string)):
+            current_observation_object = output_string[i]
+            if date_of_my_input == current_observation_object[0:19]:
+                error_time()
+                break
+            else:
+                i = i+1
+            if i == len(output_string):
+                output_string.append(current_object)
+    print(current_object)
+    return
 
 # Confirm Object button
 confirm_button = Button(root, text = 'Confirm Object',
@@ -521,5 +724,6 @@ Finalize_button.grid(row = 999, column = 4, padx = 5, pady = 5)
 # Exit button
 exit_button = Button(root, text = 'Exit', command = exit_popup)
 exit_button.grid(row = 999, column = 5, padx = 5, pady = 5)
+
 
 mainloop()
