@@ -17,6 +17,9 @@ def main(objects):
     del objects[0]
     for i in range(len(objects)):
         current_object_info = objects[i].split()
+        
+        corrected_date = TT.main(current_object_info[0], current_object_info[1])
+        
         '''
         current_object_info:
             [0] is date
@@ -28,16 +31,12 @@ def main(objects):
             [6] is integration time
             [7] is time between calibrations
         '''
-        corrected_date = TT.main(current_object_info[0], current_object_info[1])
         
         
-        
-        
+        print('\n\nGUI_Master_Writter Opened\n')
         print(corrected_date)
-        
-        
         print(current_object_info)
     return
 
-main(['C:/Users/bstat/Documents/GitHub/Radio-Master-Scripting/GUI cmd rad', 
-      '2020-12-31 19:02:03 Listed 40G 1301 1 1 0'])
+# main(['C:/Users/bstat/Documents/GitHub/Radio-Master-Scripting/GUI cmd rad', 
+#       '2020-12-31 19:02:03 Listed 40G 1301 1 1 0'])
