@@ -39,6 +39,9 @@ import tkinter.scrolledtext as tkst
 import time
 import os
 import os.path
+import webbrowser as wb
+import GUI_Master_Writer as MW
+
 root=Tk()
 root.title('UAH Astronomy Club')
 root.iconbitmap('icon.ico')
@@ -248,7 +251,6 @@ am_pm.grid(row = 1, column = 4, padx=10, columnspan = 3)
 
 # Validates if the inputted time has passed or not
 def time_validator(obs_date, hr, mn, sec, am_pm):
-    # TODO - check for year, day, and month changeovers
     time_now = datetime.now()
     inputted_date_int = [0,0,0]
     inputted_date = obs_date.split('/')
@@ -263,9 +265,15 @@ def time_validator(obs_date, hr, mn, sec, am_pm):
     inputted_date_int[1] = int(inputted_date[1])
     inputted_date_int[2] = int(inputted_date[2])
     
-    if inputted_date_int[2] == int(time_now.year):
-        if inputted_date_int[0] == int(time_now.month):
-            if inputted_date_int[1] == int(time_now.day):
+    if inputted_date_int[2] < int(time_now.year):
+        time_valid = False
+    elif inputted_date_int[2] == int(time_now.year):
+        if inputted_date_int[0] < int(time_now.month):
+            time_valid = False
+        elif inputted_date_int[0] == int(time_now.month):
+            if inputted_date_int[1] < int(time_now.day):
+                time_valid = False
+            elif inputted_date_int[1] == int(time_now.day):
                 if hr < int(time_now.hour):
                     time_valid = False
                     print(time_valid)
@@ -276,7 +284,18 @@ def time_validator(obs_date, hr, mn, sec, am_pm):
                     elif mn == int(time_now.minute):
                         if sec <= int(time_now.second):
                             time_valid = False
-                            print(time_valid)
+                        else:
+                            time_valid = True
+                    else:
+                        time_valid = True
+                else:
+                    time_valid = True
+            else:
+                time_valid = True
+        else:
+            time_valid = True
+    else:
+        time_valid  = True
     return time_valid
 
 #------------------------------------------------------------------------------
@@ -439,14 +458,20 @@ Program_info_frame = LabelFrame(root, text = 'Program Info', padx = 5,
                                 pady = 5)
 Program_info_frame.grid(row = 3, column = 1, padx = 10, pady = 10,)
 
-# TODO - add button to open documentation
-# TODO - add button to email me about found bugs
+def open_help():
+    current_file_path = str(os.getcwd())
+    current_file_path = current_file_path.replace('\\','/')
+    help_file_path = current_file_path + '/help_pdf.pdf'
+    wb.open_new(help_file_path)
+    print(help_file_path)
 
 # Temp text
 version_text = Label(Program_info_frame, text = 'Version 0.1.0 \n Last updated: June 12, 2020')
-version_text.pack()
-pg_label = Label(Program_info_frame, text = 'Button to open pdf of help documentation')
-pg_label.pack()
+version_text.grid(column = 0, row = 0, padx = 5, pady = 5)
+
+help_but = Button(Program_info_frame, text = 'Help Document', command = open_help)
+help_but.grid(column = 0, row = 1, padx = 5, pady = 5)
+
 
 #------------------------------------------------------------------------------
 # Validation Functions
@@ -520,8 +545,6 @@ def rad_file_validation():
 def spinbox_validate():
     global error_string
     throw_error = False
-    
-    # TODO - check all spinbox (they allow nonvalid answers if typing after pressing arrows)
     
     # if input method is azel coors, validate az and el inputs
     if object_input_method.get() ==2:
@@ -730,6 +753,7 @@ def Finalize():
         write_file = str(user_def_dir) + ' ' + cmd_file_name_no_ext + ' ' + rad_file_name_no_ext
         output_string.insert(0, write_file)
         print(output_string)
+        MW.main(output_string)
         Finalize_button.config(state = DISABLED)
         confirm_button.config(state = DISABLED)
         
