@@ -23,7 +23,7 @@ Each of the objects info is formatted as follows:
         
     *For an object with galatic coordinates:
         'year-mo-dy hr:mn:sc Gal lat:lon center_freq observation_mode integration_time calibration_time'
-        ex: '2020-06-19 02:15:02 Gal 001:-02 1301 1 1 0'
+        ex: '2020-06-19 02:15:02 Gal -01:001 1301 1 1 0'
         Note: lat is always a 3 digit number and lon is always a 2 digit number
     
     Note: Months, Days, Hours, Minutes, and Seconds are always 2 digit numbers
@@ -46,7 +46,7 @@ root.iconbitmap('icon.ico')
 #-----------------------------------------------------------------------------
 # Clock Function
 
-Clock_frame = LabelFrame(root, text = 'Current Time', padx = 130, pady = 5)
+Clock_frame = LabelFrame(root, text = 'Current Time', padx = 190, pady = 5)
 Clock_frame.grid(row = 0, column = 0, padx = 10, pady = 10, columnspan = 2)
 
 def clock():
@@ -148,7 +148,7 @@ az_value.grid(row = 1, column = 2)
 
 el_text = Label(object_frame, text = 'Elevation:')
 el_text.grid(row = 1, column = 3)
-el_value = Spinbox(object_frame, from_=0, to=90, width = 3)
+el_value = Spinbox(object_frame, from_=0, to=90, width = 4)
 int_validate(el_value, limits = (0,90))
 el_value.grid(row = 1, column = 4)
 
@@ -167,22 +167,23 @@ def gal_enabler():
         
 lat_text = Label(object_frame, text = 'Latitude:')
 lat_text.grid(row = 2, column = 1)
-lat_value = Spinbox(object_frame, from_=0, to=359, width = 4)
-int_validate(lat_value, limits = (0,359))
+lat_default = StringVar(root)
+lat_default.set('0')
+lat_value = Spinbox(object_frame, from_=-90, to=90, width = 4, textvariable = lat_default)
+int_validate(lat_value, limits = (-90,90))
 lat_value.grid(row = 2, column = 2)
 
 lon_text = Label(object_frame, text = 'Longitude:')
 lon_text.grid(row = 2, column = 3)
 lon_default = StringVar(root)
 lon_default.set('0')
-lon_value = Spinbox(object_frame, from_=-90, to=90, width = 3, textvariable = lon_default)
-int_validate(lon_value, limits = (-90,90))
+lon_value = Spinbox(object_frame, from_=0, to=359, width = 4, textvariable = lon_default)
+int_validate(lon_value, limits = (0,359))
 lon_value.grid(row = 2, column = 4)
 
 # lat and lon input fields start disabled
 lat_value.config(state = DISABLED)
 lon_value.config(state=DISABLED)
-
 
 
 # #------------------------------------------------------------------------------
@@ -201,7 +202,7 @@ am_pm_default = 0
 
 date_time_frame = LabelFrame(root, text = 'Date and Time of Observation', 
                              padx = 5, pady=5)
-date_time_frame.grid(row = 2, column = 0, padx=10, pady=10)
+date_time_frame.grid(row = 2, column = 0, padx=10, pady=10, rowspan = 4)
 
 # Date picker
 cal = Calendar(date_time_frame, selectmode='day',year=current_year,month=current_month,
@@ -281,17 +282,19 @@ def time_validator(obs_date, hr, mn, sec, am_pm):
 #------------------------------------------------------------------------------
 # Integration Settings
 Integration_frame = LabelFrame(root, text = 'Integration Settings', 
-                             padx = 5, pady=5)
+                             padx = 70, pady=5)
 Integration_frame.grid(row = 1, column = 1, padx=10, pady=10)
 
 # Inputted frequency validater
 def freq_validate(event):
-    if int(frequency_box.get()) < 1301 or int(frequency_box.get()) > 1799:
-        freq_valid = False
-        frequency_box.grid_forget() 
-        freq_box_create()
+    freq_valid = True
+    if str(frequency_box.get()).isdecimal() == True:
+        if int(frequency_box.get()) < 1301 or int(frequency_box.get()) > 1799:
+            freq_valid = False
+            frequency_box.grid_forget() 
+            freq_box_create()
     else:
-        freq_valid = True
+        freq_valid = False
 
 # Creation of box to input frequency
 def freq_box_create():
@@ -348,7 +351,7 @@ calibration_time_units.grid(column = 2, row = 3)
 
 #------------------------------------------------------------------------------
 # File Info
-File_info_frame = LabelFrame(root, text = 'File Information', padx = 5,
+File_info_frame = LabelFrame(root, text = 'File Information', padx = 8,
                              pady = 5)
 File_info_frame.grid(row = 2, column = 1, padx = 10, pady = 10)
 
@@ -419,7 +422,7 @@ rad_file_name.grid(row = 4, column = 1)
 
 Notification_frame = LabelFrame(root, text = 'Notifications', padx = 5,
                                 pady = 5)
-Notification_frame.grid(row = 0, column = 3, padx = 10, pady = 10, rowspan = 3,
+Notification_frame.grid(row = 0, column = 3, padx = 10, pady = 10, rowspan = 4,
                         columnspan = 3)
 
 Notifications = tkst.ScrolledText(Notification_frame, width = 35, height = 37)
@@ -429,6 +432,21 @@ Notifications.insert(INSERT,'\nfor the UAH Astronomy Club')
 Notifications.insert(INSERT, '\n\nThis program is a work in progress')
 Notifications.insert(INSERT, '\n-----------------------------------\n')
 Notifications.config(state = 'disabled')
+
+#-----------------------------------------------------------------------------
+# Program info box
+Program_info_frame = LabelFrame(root, text = 'Program Info', padx = 5,
+                                pady = 5)
+Program_info_frame.grid(row = 3, column = 1, padx = 10, pady = 10,)
+
+# TODO - add button to open documentation
+# TODO - add button to email me about found bugs
+
+# Temp text
+version_text = Label(Program_info_frame, text = 'Version 0.1.0 \n Last updated: June 12, 2020')
+version_text.pack()
+pg_label = Label(Program_info_frame, text = 'Button to open pdf of help documentation')
+pg_label.pack()
 
 #------------------------------------------------------------------------------
 # Validation Functions
@@ -469,7 +487,7 @@ def cmd_file_validation():
             error_string = error_string + 'Command file name can only consist of letters, numbers, and underscores. \n\n'
     return valid
 
-
+# .RAD file name can only consist of numbers, letters, and underscores
 def rad_file_validation():
     nammed_rad_file = str(rad_file_name.get())
     rad_file_direct = str(file_directory.get())
@@ -498,10 +516,88 @@ def rad_file_validation():
             error_string = error_string + 'RAD file name can only consist of letters, numbers, and underscores. \n\n'
     return valid
 
+# Validate all spinbox entries
+def spinbox_validate():
+    global error_string
+    throw_error = False
+    
+    # TODO - check all spinbox (they allow nonvalid answers if typing after pressing arrows)
+    
+    # if input method is azel coors, validate az and el inputs
+    if object_input_method.get() ==2:
+        if str(az_value.get()).isdecimal() == False:
+            print('az value is not a number')
+            error_string = error_string + 'Azimuth value must be an integer between 0 and 359'
+            throw_error = True
+        elif int(az_value.get()) > 359 or int(az_value.get()) < 0:
+            error_string = error_string + 'Azimuth value must be an integer between 0 and 359'
+            throw_error = True
+        if str(el_value.get()).isdecimal() == False:
+            print('el value is not a number')
+            error_string = error_string + 'Elevation value must be an integer between 0 and 90'
+            throw_error = True
+        elif int(el_value.get()) > 359 or int(el_value.get()) < 0:
+            error_string = error_string + 'Azimuth value must be an integer between 0 and 90'
+            throw_error = True
+    # if input method is gal coors, validate lat and lon inputs       
+    if object_input_method.get() == 3:
+        lat_string = str(lat_value.get())
+        if str(lon_value.get()).isdecimal() == False:
+            print('Lon value is not a number')
+            error_string = error_string + 'Longitude value must be an integer between 0 and 359'
+            throw_error = True
+        elif int(lon_value.get()) > 359 or int(lon_value.get()) < 0:
+            error_string = error_string + 'Longitude value must be an integer between 0 and 359'
+            throw_error = True
+        if lat_string[0] != '-':
+            print(lat_string)
+            if lat_string.isnumeric() == True:
+                if int(lat_string) > 90:
+                    error_string = error_string + 'Latitude value must be an integer between -90 and 90'
+                    throw_error = True
+            elif lat_string.isnumeric() == False:
+                error_string = error_string + 'Latitude value must be an integer between -90 and 90'
+                throw_error = True
+        elif lat_string[0] == '-':
+            abs_lat_string = lat_string[1:]
+            if len(abs_lat_string) == 0:
+                error_string = error_string + 'Latitude value must be an integer between -90 and 90'
+                throw_error = True
+            elif abs_lat_string.isnumeric() == True:
+                if int(abs_lat_string) > 90:
+                    error_string = error_string + 'Latitude value must be an integer between -90 and 90'
+                    throw_error = True
+            elif abs_lat_string.isnumeric() == False:
+                error_string = error_string + 'Latitude value must be an integer between -90 and 90'
+                throw_error = True
+    
+    # validate center frequency
+    if str(frequency_box.get()).isdecimal() == True:
+        center_freq = str(frequency_box.get())
+        if int(center_freq) < 1301 or int(center_freq) > 1699:
+            error_string = error_string + 'Center frequency value must be an integer between 1301 and 1699'
+            throw_error = True
+    elif str(frequency_box.get()).isdecimal() == False:
+       error_string = error_string + 'Center frequency value must be an integer between 1301 and 1699'
+       throw_error = True
+       
+    # validate integration time
+    if str(integration_time_box.get()).isdecimal() == False:
+       error_string = error_string + 'Integration time value must be an integer greater than 0'
+       throw_error = True
+    
+    # validate time between calibrations
+    if str(calibration_time_box.get()).isdecimal() == False:
+       error_string = error_string + 'Calibration time value must be an integer greater than or equal to 0'
+       throw_error = True
+
+    print(throw_error)
+    return throw_error
+    
     
 
 #------------------------------------------------------------------------------
-# Confirm and exit buttons
+# Confirm, Finilize, and exit buttons
 global output_string # List containing all output info
 output_string = []
 
@@ -522,6 +618,7 @@ def exit_popup():
    if response == 1:
        root.destroy()
 
+
 # What to do when the confirm button is clicked
 global file_already_inputted
 file_already_inputted = False
@@ -531,44 +628,96 @@ def confirm_click(file_already_inputted):
     global error_string
     global cmd_file_path
     global rad_file_path
+    
     throw_error = False
     error_string = ''
     cmd_file_path = ''
     rad_file_path = ''
-    
-    obs_date = cal.get_date()
-    obs_date = str(obs_date)
-    obs_hr = int(hr.get())
-    obs_min = int(minute.get())
-    obs_sec = int(second.get())
-    obs_am_pm = am_pm.get()
-    time_validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
-    if time_validation == False:
-        error_string = error_string + 'Inputted time is not valid.\n\n'
-        throw_error = True
-    
-    if file_already_inputted == False:
-        cmd_valid = cmd_file_validation()
-        rad_valid = rad_file_validation()
-        
-        if cmd_valid == True and rad_valid == True:
-            file_already_inputted = True
-            file_browse_button.config(state = DISABLED)
-            cmd_file_name.config(state = DISABLED)
-            rad_file_name.config(state = DISABLED)
-        else:
-            throw_error = True
-    if throw_error == True:
+    spinbox_error = spinbox_validate()
+    if spinbox_error == True:
         error_popup()
     else:
-        object_add(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
-        Notifications.config(state = 'normal')
-        Notifications.insert(INSERT, '\nObject Inputted')
-        Notifications.config(state = 'disabled')
-        Notifications.see('end')
-        # Reset all buttons
+        obs_date = cal.get_date()
+        obs_date = str(obs_date)
+        obs_hr = int(hr.get())
+        obs_min = int(minute.get())
+        obs_sec = int(second.get())
+        obs_am_pm = am_pm.get()
+        time_validation = time_validator(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
+        if time_validation == False:
+            error_string = error_string + 'Inputted time is not valid.\n\n'
+            throw_error = True
+        
+        if file_already_inputted == False:
+            cmd_valid = cmd_file_validation()
+            rad_valid = rad_file_validation()
+            
+            if cmd_valid == True and rad_valid == True:
+                file_already_inputted = True
+                file_browse_button.config(state = DISABLED)
+                cmd_file_name.config(state = DISABLED)
+                rad_file_name.config(state = DISABLED)
+            else:
+                throw_error = True
+        if throw_error == True:
+            error_popup()
+        else:
+            object_add(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
+            Notifications.config(state = 'normal')
+            Notifications.insert(INSERT, '\nObject Inputted')
+            Notifications.config(state = 'disabled')
+            Notifications.see('end')
+        
+        global output_string
+        print(output_string)
+        
+# Reset all buttons
+def reset_inputs():
+    object_input_method.set(2)
+    az_reset = StringVar(root)
+    az_reset.set('0')
+    el_reset = StringVar(root)
+    el_reset.set('0')
+    az_value.config(state = NORMAL, textvariable = az_reset)
+    el_value.config(state=NORMAL, textvariable = el_reset)
+    az_value.config(state = DISABLED)
+    el_value.config(state=DISABLED)
+    int_validate(az_value, limits = (0,359))
+    int_validate(el_value, limits = (0,90))
+    
+    
+    object_input_method.set(3)
+    lat_reset = StringVar(root)
+    lat_reset.set('0')
+    lon_reset = StringVar(root)
+    lon_reset.set('0')
+    lat_value.config(state = NORMAL, textvariable = lat_reset)
+    lon_value.config(state=NORMAL, textvariable = lon_reset)
+    lat_value.config(state = DISABLED)
+    lon_value.config(state=DISABLED)
+    int_validate(lat_value, limits = (-90,90))
+    int_validate(lon_value, limits = (0,359))
+    
+    object_input_method.set(1)
+    objectBox.current(0)
+    objectBox.config(state = 'readonly')
+    
+    freq_box_create()
+    obs_mode_value.current(0)
+    
+    integration_time_reset = StringVar(root)
+    integration_time_reset.set('1')
+    integration_time_box.config(textvariable = integration_time_reset)
+    
+    calibration_time_reset = StringVar(root)
+    calibration_time_reset.set('0')
+    calibration_time_box.config(textvariable = calibration_time_reset)
+    return
+    
+
 
 def Finalize():
+    # TODO - after cmd and rad files have been written, clear everyting for new file inputs
     global output_string
     if len(output_string) == 0:
         Finalized_error()
@@ -648,26 +797,27 @@ def object_add(date, hr, mn, sc, AP):
             ele = str(ele)
         current_object = current_object + 'Azel ' + azi + ':' + ele + ' '
         comf_message = '\nAzel coordinates added to file'
-        
+    
+    # lat variable is the longitude and lon variable is the latitude
     elif object_input_method.get() == 3:
-        lat = int(lat_value.get())
-        if lat < 10:
-            lat = '00'+ str(lat)
-        elif lat > 9 and lat < 100:
-            lat = '0' + str(lat)
-        else:
-            lat = str(lat)
         lon = int(lon_value.get())
-        if lon < 0:
-            lon = abs(lon)
-            if lon < 10:
-                lon = '-0' + str(lon)
-            else:
-                lon = '-' + str(lon)
-        elif lon >=0 and lon < 10:
+        if lon < 10:
+            lon = '00'+ str(lon)
+        elif lon > 9 and lon < 100:
             lon = '0' + str(lon)
         else:
             lon = str(lon)
+        lat = int(lat_value.get())
+        if lat < 0:
+            lat = abs(lat)
+            if lat < 10:
+                lat = '-0' + str(lat)
+            else:
+                lat = '-' + str(lat)
+        elif lat >=0 and lat < 10:
+            lat = '0' + str(lat)
+        else:
+            lat = str(lat)
         current_object = current_object + 'Gal ' + lat + ':' + lon + ' '
         comf_message = '\nGalactic coordinates added to file'
         
@@ -693,7 +843,6 @@ def object_add(date, hr, mn, sc, AP):
     Notifications.config(state = 'disabled')
     Notifications.see('end')
     
-    # TODO - reset input fields
     if len(output_string) == 0:
         output_string.append(current_object)
     else:
@@ -708,7 +857,8 @@ def object_add(date, hr, mn, sc, AP):
                 i = i+1
             if i == len(output_string):
                 output_string.append(current_object)
-    print(current_object)
+    
+    reset_inputs()
     return
 
 # Confirm Object button
