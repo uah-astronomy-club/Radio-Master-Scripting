@@ -901,3 +901,8 @@ exit_button.grid(row = 999, column = 5, padx = 5, pady = 5)
 
 
 mainloop()
+
+
+# TODO - allow user to input multiple rad file names for different observations
+# TODO - better checking of time overlap [include integration time]
+# TODO - check what time between calibrations should be doing [this might need removed]

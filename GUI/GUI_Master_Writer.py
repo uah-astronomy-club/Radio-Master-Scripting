@@ -6,6 +6,7 @@ Created on Fri Jun 12 14:49:38 2020
 @author: Brandon Staton
 """
 import GUI_TellieTime as TT
+import GUI_TelescopePointer as TP
 
 def main(objects):
     files_info = objects[0].split()
@@ -17,8 +18,14 @@ def main(objects):
     del objects[0]
     for i in range(len(objects)):
         current_object_info = objects[i].split()
+        object_dictionary = {}
         
         corrected_date = TT.main(current_object_info[0], current_object_info[1])
+        object_dictionary = TP.pointatobject(object_dictionary, 
+                                             current_object_info[2], 
+                                             current_object_info[3])
+        
+        
         
         '''
         current_object_info:
@@ -36,7 +43,10 @@ def main(objects):
         print('\n\nGUI_Master_Writter Opened\n')
         print(corrected_date)
         print(current_object_info)
+        print('Object Dict: ' + str(object_dictionary))
     return
 
 # main(['C:/Users/bstat/Documents/GitHub/Radio-Master-Scripting/GUI cmd rad', 
-#       '2020-12-31 19:02:03 Listed 40G 1301 1 1 0'])
+#       '2020-12-31 19:02:03 Gal -01:001 1301 1 1 0'])
+
+# add integration time to observation start time to determine observation end time
