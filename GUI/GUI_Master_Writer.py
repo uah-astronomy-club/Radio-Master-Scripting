@@ -36,7 +36,7 @@ def main(objects):
             [4] is center freq
             [5] is observation mode
             [6] is integration time
-            [7] is time between calibrations
+            [7] is auto calibration yes/no (1/2)
         '''
         
         

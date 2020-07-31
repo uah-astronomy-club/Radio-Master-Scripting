@@ -13,17 +13,17 @@ of the user-inputted observations. The output list is formatted as follows:
     
 Each of the objects info is formatted as follows:
     *For a listed object:
-        'year-mo-dy hr:mn:sc Listed name center_freq observation_mode integration_time calibration_time'
-        ex: '2020-06-11 20:00:00 Listed 50G 1301 1 1 0'
+        'year-mo-dy hr:mn:sc Listed name center_freq observation_mode integration_time calibration_yes/no(1/2)'
+        ex: '2020-06-11 20:00:00 Listed 50G 1301 1 1 1'
         
     *For an object with azel coordinates:
-        'year-mo-dy hr:mn:sc Azel Az:el center_freq observation_mode integration_time calibration_time'
-        ex: '2020-06-19 02:12:02 Azel 001:01 1301 1 1 0'
+        'year-mo-dy hr:mn:sc Azel Az:el center_freq observation_mode integration_time calibration_yes/no(1/2)'
+        ex: '2020-06-19 02:12:02 Azel 001:01 1301 1 1 1'
         Note: az is always a 3 digit number and lon is always a 2 digit number
         
     *For an object with galatic coordinates:
-        'year-mo-dy hr:mn:sc Gal lat:lon center_freq observation_mode integration_time calibration_time'
-        ex: '2020-06-19 02:15:02 Gal -01:001 1301 1 1 0'
+        'year-mo-dy hr:mn:sc Gal lat:lon center_freq observation_mode integration_time calibration_yes/no(1/2)'
+        ex: '2020-06-19 02:15:02 Gal -01:001 1301 1 1 2'
         Note: lat is always a 3 digit number and lon is always a 2 digit number
     
     Note: Months, Days, Hours, Minutes, and Seconds are always 2 digit numbers
@@ -217,6 +217,7 @@ time_text = Label(date_time_frame, text = 'Time of observation: ', pady = 10)
 time_text.grid(row = 1, column = 0)
 
 # hour picker
+global hr
 hr_default = StringVar(root)
 hr_default.set(12)
 hr = Spinbox(date_time_frame,from_=1, to=12, width = 3, 
@@ -224,6 +225,7 @@ hr = Spinbox(date_time_frame,from_=1, to=12, width = 3,
 hr.grid(row = 1, column = 1)
 
 # minute picker
+global minute
 min_default = StringVar(root)
 min_default.set(00)
 minute = Spinbox(date_time_frame, from_ = 00, to=59, width = 3, format="%02.0f",
@@ -232,6 +234,7 @@ int_validate(minute, limits = (00,59))
 minute.grid(row = 1, column = 2)
 
 # second picker
+global second
 sec_default = StringVar(root)
 sec_default.set(00)
 second = Spinbox(date_time_frame, from_=00, to = 59, width = 3, format="%02.0f",
@@ -356,16 +359,16 @@ integration_time_units = Label(Integration_frame, text = ' Second(s)')
 integration_time_units.grid(column = 2, row = 2)
 
 
+# Calibration
+calibrate = IntVar()
+calibrate.set(1)
 
-# Calibration Time [seconds]
-calibration_time_text = Label(Integration_frame, 
-                              text = 'Time Between Calibrations: ')
-calibration_time_text.grid(row = 3, column = 0)
-calibration_time_box = Spinbox(Integration_frame, from_= 0, to = 99999, width = 5)
-int_validate(calibration_time_box, limits = (0,99999))
-calibration_time_box.grid(column = 1, row = 3, pady = 3)
-calibration_time_units = Label(Integration_frame, text = ' Second(s)')
-calibration_time_units.grid(column = 2, row = 3)
+calibration_text = Label(Integration_frame, text = 'Auto Calibration: ')
+calibration_text.grid(row = 3, column = 0)
+calibrate_yes = Radiobutton(Integration_frame,text = 'Yes', variable = calibrate, value = 1)
+calibrate_yes.grid(row = 3, column = 1)
+calibrate_no = Radiobutton(Integration_frame,text='No', variable = calibrate, value = 2)
+calibrate_no.grid(row = 3, column = 2)
 
 
 #------------------------------------------------------------------------------
@@ -435,7 +438,6 @@ rad_file_name_text.grid(column = 0, row = 4)
 rad_file_name = Entry(File_info_frame)
 rad_file_name.grid(row = 4, column = 1)
 
-
 #------------------------------------------------------------------------------
 # Notification Box
 
@@ -466,7 +468,7 @@ def open_help():
     print(help_file_path)
 
 # Temp text
-version_text = Label(Program_info_frame, text = 'Version 0.1.0 \n Last updated: June 12, 2020')
+version_text = Label(Program_info_frame, text = 'Prerelease Version 0.1.1 \n Last updated: July 31, 2020')
 version_text.grid(column = 0, row = 0, padx = 5, pady = 5)
 
 help_but = Button(Program_info_frame, text = 'Help Document', command = open_help)
@@ -608,13 +610,8 @@ def spinbox_validate():
     if str(integration_time_box.get()).isdecimal() == False:
        error_string = error_string + 'Integration time value must be an integer greater than 0'
        throw_error = True
-    
-    # validate time between calibrations
-    if str(calibration_time_box.get()).isdecimal() == False:
-       error_string = error_string + 'Calibration time value must be an integer greater than or equal to 0'
-       throw_error = True
 
-    print(throw_error)
+    # print(throw_error)
     return throw_error
     
     
@@ -732,10 +729,53 @@ def reset_inputs():
     integration_time_reset.set('1')
     integration_time_box.config(textvariable = integration_time_reset)
     
-    calibration_time_reset = StringVar(root)
-    calibration_time_reset.set('0')
-    calibration_time_box.config(textvariable = calibration_time_reset)
+    calibrate.set(1)
     return
+
+# Clear all stored info
+def clear():
+    global output_string
+    global hr
+    global minute
+    global second
+    
+    # outputs and file name reset
+    output_string = []
+    cmd_file_name = Entry(File_info_frame)
+    cmd_file_name.grid(row = 3, column = 1)
+    rad_file_name = Entry(File_info_frame)
+    rad_file_name.grid(row = 4, column = 1)
+    
+    # Time reset
+    hr_default = StringVar(root)
+    hr_default.set(12)
+    hr = Spinbox(date_time_frame,from_=1, to=12, width = 3, 
+                 textvariable = hr_default, wrap=True)
+    hr.grid(row = 1, column = 1)
+    
+    min_default = StringVar(root)
+    min_default.set(00)
+    minute = Spinbox(date_time_frame, from_ = 00, to=59, width = 3, format="%02.0f",
+                     textvariable = min_default, wrap=True)
+    int_validate(minute, limits = (00,59))
+    minute.grid(row = 1, column = 2)
+    sec_default = StringVar(root)
+    sec_default.set(00)
+    second = Spinbox(date_time_frame, from_=00, to = 59, width = 3, format="%02.0f",
+                     textvariable = sec_default, wrap=True)
+    int_validate(second, limits = (00,59))
+    second.grid(row = 1, column = 3)
+    
+    # date reset
+    time_now = datetime.now()
+    current_year = int(time_now.year)
+    current_month=int(time_now.month)
+    current_day=int(time_now.day)
+    cal = Calendar(date_time_frame, selectmode='day',year=current_year,month=current_month,
+                    day=current_day, mindate=today)
+    cal.grid(row = 0, column = 0, padx = 31, columnspan = 5)
+    
+    
     
 
 
@@ -760,7 +800,17 @@ def Finalize():
         Notifications.config(state = 'normal')
         Notifications.insert(INSERT, '\nCommand file being written')
         Notifications.config(state = 'disabled')
+        
+        # TODO - Do the following only after command file has been
+        Notifications.config(state = 'normal')
+        Notifications.insert(INSERT, '\nCommand file written\n\n')
+        Notifications.config(state = 'disabled')
         Notifications.see('end')
+        Finalize_button.config(state = NORMAL)
+        confirm_button.config(state = NORMAL)
+        reset_inputs()
+        clear()
+        
     
 def object_add(date, hr, mn, sc, AP):
     global output_string
@@ -858,8 +908,8 @@ def object_add(date, hr, mn, sc, AP):
     current_object = current_object + integration_time + ' '
     
     # pass the time between calibrations to the output
-    cal_time = calibration_time_box.get()
-    current_object = current_object + cal_time
+    cal_time = calibrate.get()
+    current_object = current_object + str(cal_time)
     
     # Show user confirmation
     Notifications.config(state = 'normal')
@@ -905,4 +955,5 @@ mainloop()
 
 # TODO - allow user to input multiple rad file names for different observations
 # TODO - better checking of time overlap [include integration time]
-# TODO - check what time between calibrations should be doing [this might need removed]
+# TODO - at startup, ask user if they want to delete files that all observations has passed
+# TODO - add error if subsequent observations > 24 hours between eachother [ask user to create multiple files]
