@@ -41,6 +41,7 @@ import os
 import os.path
 import webbrowser as wb
 import GUI_Master_Writer as MW
+import RAD_File_Checker as RFC
 
 root=Tk()
 root.title('UAH Astronomy Club')
@@ -648,6 +649,7 @@ def confirm_click(file_already_inputted):
     global error_string
     global cmd_file_path
     global rad_file_path
+    global output_string
     
     throw_error = False
     error_string = ''
@@ -676,19 +678,21 @@ def confirm_click(file_already_inputted):
                 file_already_inputted = True
                 file_browse_button.config(state = DISABLED)
                 cmd_file_name.config(state = DISABLED)
-                rad_file_name.config(state = DISABLED)
             else:
                 throw_error = True
         if throw_error == True:
             error_popup()
         else:
+            #TODO - add rad file name to the output string
             object_add(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
+            output_string.sort()
+            RFC.main(output_string)
+            
             Notifications.config(state = 'normal')
             Notifications.insert(INSERT, '\nObject Inputted')
             Notifications.config(state = 'disabled')
             Notifications.see('end')
         
-        global output_string
         print(output_string)
         
 # Reset all buttons
@@ -907,9 +911,12 @@ def object_add(date, hr, mn, sc, AP):
     integration_time = integration_time_box.get()
     current_object = current_object + integration_time + ' '
     
-    # pass the time between calibrations to the output
+    # pass the auto calibration variable to the output
     cal_time = calibrate.get()
-    current_object = current_object + str(cal_time)
+    current_object = current_object + str(cal_time) + ' '
+    
+    # pass the rad file name to the output
+    current_object = current_object + str(rad_file_name_no_ext)
     
     # Show user confirmation
     Notifications.config(state = 'normal')
