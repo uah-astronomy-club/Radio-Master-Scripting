@@ -337,7 +337,7 @@ frequency_unit.grid(column = 2, row = 0)
 obs_mode_text = Label(Integration_frame, text = 'Observation Mode: ')
 obs_mode_text.grid(column =0 , row = 1, pady = 3)
 
-
+# gets the user inputted observation mode
 def obs_selected(event):
     selected_obs_mode = obs_mode_value.get()
     print(selected_obs_mode)
@@ -461,6 +461,7 @@ Program_info_frame = LabelFrame(root, text = 'Program Info', padx = 5,
                                 pady = 5)
 Program_info_frame.grid(row = 3, column = 1, padx = 10, pady = 10,)
 
+# Opens the help file
 def open_help():
     current_file_path = str(os.getcwd())
     current_file_path = current_file_path.replace('\\','/')
@@ -469,7 +470,7 @@ def open_help():
     print(help_file_path)
 
 # Temp text
-version_text = Label(Program_info_frame, text = 'Prerelease Version 0.1.1 \n Last updated: July 31, 2020')
+version_text = Label(Program_info_frame, text = 'Prerelease Version 0.1.1 \n Last updated: August 05, 2020')
 version_text.grid(column = 0, row = 0, padx = 5, pady = 5)
 
 help_but = Button(Program_info_frame, text = 'Help Document', command = open_help)
@@ -643,8 +644,6 @@ def exit_popup():
 # What to do when the confirm button is clicked
 global file_already_inputted
 file_already_inputted = False
-
-
 def confirm_click(file_already_inputted):
     global error_string
     global cmd_file_path
@@ -684,14 +683,23 @@ def confirm_click(file_already_inputted):
             error_popup()
         else:
             #TODO - add rad file name to the output string
-            object_add(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
+            comf_message = object_add(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
             output_string.sort()
-            RFC.main(output_string)
-            
-            Notifications.config(state = 'normal')
-            Notifications.insert(INSERT, '\nObject Inputted')
-            Notifications.config(state = 'disabled')
-            Notifications.see('end')
+            throw_error, output_string,rad_between,rad_bracket = RFC.main(output_string)
+            if throw_error == False:
+                # Show user confirmation
+                Notifications.config(state = 'normal')
+                Notifications.insert(INSERT, comf_message)
+                Notifications.config(state = 'disabled')
+                Notifications.see('end')
+                
+                Notifications.config(state = 'normal')
+                Notifications.insert(INSERT, '\nObject Inputted\n')
+                Notifications.config(state = 'disabled')
+                Notifications.see('end')
+            else:
+                error_string = str(rad_between) + '.rad cannot be written to while writing to '+ str(rad_bracket) + '.rad\n\n'
+                error_popup()
         
         print(output_string)
         
@@ -778,13 +786,9 @@ def clear():
     cal = Calendar(date_time_frame, selectmode='day',year=current_year,month=current_month,
                     day=current_day, mindate=today)
     cal.grid(row = 0, column = 0, padx = 31, columnspan = 5)
-    
-    
-    
 
-
+# Send the info to the scripts that write the .cmd files
 def Finalize():
-    # TODO - after cmd and rad files have been written, clear everyting for new file inputs
     global output_string
     if len(output_string) == 0:
         Finalized_error()
@@ -808,6 +812,7 @@ def Finalize():
         # TODO - Do the following only after command file has been
         Notifications.config(state = 'normal')
         Notifications.insert(INSERT, '\nCommand file written\n\n')
+        Notifications.insert(INSERT, '\n-----------------------------------\n')
         Notifications.config(state = 'disabled')
         Notifications.see('end')
         Finalize_button.config(state = NORMAL)
@@ -815,7 +820,7 @@ def Finalize():
         reset_inputs()
         clear()
         
-    
+# Adds the object observation info to the output string
 def object_add(date, hr, mn, sc, AP):
     global output_string
     current_object = ''
@@ -918,12 +923,6 @@ def object_add(date, hr, mn, sc, AP):
     # pass the rad file name to the output
     current_object = current_object + str(rad_file_name_no_ext)
     
-    # Show user confirmation
-    Notifications.config(state = 'normal')
-    Notifications.insert(INSERT, comf_message)
-    Notifications.config(state = 'disabled')
-    Notifications.see('end')
-    
     if len(output_string) == 0:
         output_string.append(current_object)
     else:
@@ -940,7 +939,7 @@ def object_add(date, hr, mn, sc, AP):
                 output_string.append(current_object)
     
     reset_inputs()
-    return
+    return comf_message
 
 # Confirm Object button
 confirm_button = Button(root, text = 'Confirm Object',
@@ -959,8 +958,7 @@ exit_button.grid(row = 999, column = 5, padx = 5, pady = 5)
 
 mainloop()
 
-
-# TODO - allow user to input multiple rad file names for different observations
 # TODO - better checking of time overlap [include integration time]
 # TODO - at startup, ask user if they want to delete files that all observations has passed
 # TODO - add error if subsequent observations > 24 hours between eachother [ask user to create multiple files]
+# TODO - add rad file checking function
