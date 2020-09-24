@@ -682,7 +682,6 @@ def confirm_click(file_already_inputted):
         if throw_error == True:
             error_popup()
         else:
-            #TODO - add rad file name to the output string
             comf_message = object_add(obs_date, obs_hr, obs_min, obs_sec, obs_am_pm)
             output_string.sort()
             throw_error, output_string,rad_between,rad_bracket = RFC.main(output_string)
@@ -958,7 +957,10 @@ exit_button.grid(row = 999, column = 5, padx = 5, pady = 5)
 
 mainloop()
 
-# TODO - better checking of time overlap [include integration time]
-# TODO - at startup, ask user if they want to delete files that all observations has passed
-# TODO - add error if subsequent observations > 24 hours between eachother [ask user to create multiple files]
-# TODO - add rad file checking function
+# Todo in this update:
+    
+# Todo in later updates:
+    # TODO - better checking of time overlap [include integration time]
+    # TODO - at startup, ask user if they want to delete files that all observations has passed
+    # TODO - add error if subsequent observations > 24 hours between eachother [ask user to create multiple files]
+    # TODO - add rad file checking function
