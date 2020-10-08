@@ -7,6 +7,7 @@ Created on Fri Jun 12 14:49:38 2020
 """
 import GUI_TellieTime as TT
 import GUI_TelescopePointer as TP
+import GUI_CentFreqMode as CFM
 
 def main(objects):
     files_info = objects[0].split()
@@ -20,10 +21,15 @@ def main(objects):
         current_object_info = objects[i].split()
         object_dictionary = {}
         
+        # Convert inputted date to year:day:hr:mn:sc
         corrected_date = TT.main(current_object_info[0], current_object_info[1])
+        
+        # Puts all objects to be observed in a dictionary
         object_dictionary = TP.pointatobject(object_dictionary, 
                                              current_object_info[2], 
                                              current_object_info[3])
+        
+        # Sends the info to center frequ
         
         
         
@@ -46,7 +52,6 @@ def main(objects):
         print('Object Dict: ' + str(object_dictionary))
     return
 
-# main(['C:/Users/bstat/Documents/GitHub/Radio-Master-Scripting/GUI cmd rad', 
-#       '2020-12-31 19:02:03 Gal -01:001 1301 1 1 0'])
+main(['C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI cmd rad', '2020-10-15 00:00:00 Listed 70G 1301 1 1 1 rad'])
 
 # add integration time to observation start time to determine observation end time
