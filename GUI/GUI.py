@@ -485,6 +485,8 @@ global cmd_file_path
 global rad_file_path
 global cmd_file_name_no_ext
 global rad_file_name_no_ext
+global rad_file_list
+rad_file_list = []
 
 # Command file name can only consist of numbers, letters, and underscores
 def cmd_file_validation():
@@ -524,7 +526,13 @@ def rad_file_validation():
     if nammed_rad_file == '':
         global error_string
         valid = False
-        error_string = error_string + 'RAD file name cannot be empty. \n\n'
+        error_string = error_string + 'RAD file name cannot be empty. \n\n'  
+    # Checks if the rad file name has been previously inputted          
+    elif nammed_rad_file in rad_file_list:
+        # Only allows multiple observations to be stored in the most recently inputted rad file
+        if rad_file_list[len(rad_file_list)-1] != nammed_rad_file:
+            error_string = error_string + 'That RAD file name is already in use.\n\n'
+            valid = False
     else:
         if re.match('^[A-Za-z0-9_]*$', nammed_rad_file):
             valid = True
@@ -539,6 +547,7 @@ def rad_file_validation():
                 error_string = error_string + 'There is already a RAD file with that name.\n\n'
             else:
                 valid = True
+                rad_file_list.append(nammed_rad_file)
 
         else:
             valid = False
@@ -797,7 +806,7 @@ def Finalize():
         GD = open('GUI_Defaults.txt', 'r')
         user_def_dir = GD.read()
         GD.close()
-        write_file = str(user_def_dir) + ' ' + cmd_file_name_no_ext + ' ' + rad_file_name_no_ext
+        write_file = str(user_def_dir) + ' ' + cmd_file_name_no_ext
         output_string.insert(0, write_file)
         print(output_string)
         MW.main(output_string)
@@ -963,4 +972,3 @@ mainloop()
     # TODO - better checking of time overlap [include integration time]
     # TODO - at startup, ask user if they want to delete files that all observations has passed
     # TODO - add error if subsequent observations > 24 hours between eachother [ask user to create multiple files]
-    # TODO - add rad file checking function

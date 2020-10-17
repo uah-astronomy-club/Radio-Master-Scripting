@@ -5,6 +5,20 @@ Created on Wed Feb 13 21:59:48 2019
 @author: Declan
 """
 
+def timeanddatapoints(objectlist,integration_time):
+    '''
+    takes a dictionary of objects and uses their keys to assign the length of each data point and how many data points should be taken
+    returns a dictionary using the same keys but the values are 'length,number of points'     
+    '''
+    timeanddatapointsdict={}
+    
+    thing = objectlist.keys()
+    st = str(integration_time)
+    timeanddatapointsdict.update({thing:st})
+    
+    return timeanddatapointsdict
+
+
 
 
 

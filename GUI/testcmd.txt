@@ -1,0 +1,7 @@
+2020:356:18:00:00
+: freq 1440 1
+: moon
+: record testrad.rad
+: 20
+: roff
+: stow

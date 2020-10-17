@@ -9,12 +9,12 @@ import GUI_TellieTime as TT
 import GUI_TelescopePointer as TP
 import GUI_CentFreqMode as CFM
 import GUI_TimeAndDataPoints as TDP
+#import GUI_ActualWriter as AW
 
 def main(objects):
     files_info = objects[0].split()
     directory = files_info[0]
     cmd_file = files_info[1] + '.cmd'
-    rad_file = files_info[2] + '.rad'
     
     # Deletes the file directory and name info for easier indexing
     del objects[0]
@@ -34,6 +34,10 @@ def main(objects):
         freq_info = CFM.main(i,current_object_info[4], current_object_info[5])
         
         #Sends info to time and data points
+        #timer_dict = TDP.timeanddatapoints(object_dictionary, 
+        #                                     current_object_info[6])
+        
+        #Send all the info to the program that writes the command file
         
         
         
@@ -49,6 +53,7 @@ def main(objects):
             [5] is observation mode
             [6] is integration time
             [7] is auto calibration yes/no (1/2)
+            [8] is rad file name
         '''
         
         
@@ -62,6 +67,16 @@ def main(objects):
 #['C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI cmd rad2', '2020-10-15 00:00:00 Listed 40G 1301 1 1 1 rad', '2020-10-16 00:00:00 Listed 60G 1304 2 2 2 rad2']
 
 
-main(['C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI cmd rad2', '2020-10-15 00:00:00 Listed 40G 1301 1 1 1 rad', '2020-10-16 00:00:00 Listed 60G 1304 2 2 2 rad2'])
+main(['C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI cmd', '2020-10-15 00:00:00 Listed 40G 1301 1 1 1 rad', '2020-10-16 00:00:00 Listed 60G 1304 2 2 2 rad2'])
 
 # add integration time to observation start time to determine observation end time
+
+
+'''
+2020:356:18:00:00
+{'moon': 'named'}
+{'all': '1440,1'}
+{'all': '20,40'}
+{'directoryname': 'C:/Users/bstat/Documents/GitHub/Radio-Master-Scripting/GUI', 'filename': 'testcmd', 'moon': 'testrad'}
+'''
+

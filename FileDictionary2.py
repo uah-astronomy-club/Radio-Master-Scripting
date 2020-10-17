@@ -14,7 +14,7 @@ def filenames(objectdict):
     '''
     filenamesdict={}
     while True:
-        default_dir = 'C:/'
+        default_dir = 'C:/Users/bstat/Documents/GitHub/Radio-Master-Scripting/GUI'
         yn = input('Use default file path of ' + default_dir + ' ? y/n: ')
         if (yn=='y'):
             dictoryname = default_dir
@@ -28,6 +28,8 @@ def filenames(objectdict):
                 override = input('cmd file already exists. Override (y/n)?: ')
                 if (override == 'y'):
                     cmdfileoverride = True
+            else:
+                cmdfileoverride=True
                 
         
         filenamesdict.update({'filename':cmdname})
