@@ -1,1 +1,10 @@
-Test
+2020:001:01:00:59
+:freq 1400 1
+:test
+:noisecal
+[Observation Time]
+:record [rad file name]
+:[Object]
+:[Integration time]
+:roff
+:stow

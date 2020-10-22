@@ -9,6 +9,7 @@ import GUI_TellieTime as TT
 import GUI_TelescopePointer as TP
 import GUI_CentFreqMode as CFM
 import GUI_TimeAndDataPoints as TDP
+import GUI_FileStart as FS
 #import GUI_ActualWriter as AW
 
 def main(objects):
@@ -24,7 +25,20 @@ def main(objects):
         
         # Convert inputted date to year:day:hr:mn:sc
         corrected_date = TT.main(current_object_info[0], current_object_info[1])
+        corrected_date = str(corrected_date)
+        print(corrected_date)
         
+        if i==1:
+            calibration_time = FS.starttime(corrected_date)
+            start = True
+        else:
+            start = False
+        
+        if i == len(objects):
+            last = True
+        else:
+            last = False
+            
         # Puts all objects to be observed in a dictionary
         object_dictionary = TP.pointatobject(object_dictionary, 
                                              current_object_info[2], 
