@@ -434,7 +434,7 @@ cmd_file_name_text.grid(column = 0, row = 3)
 cmd_file_name = Entry(File_info_frame)
 cmd_file_name.grid(row = 3, column = 1)
 
-rad_file_name_text = Label(File_info_frame, text = 'RAD File Name: ')
+rad_file_name_text = Label(File_info_frame, text = 'Output File Name: ')
 rad_file_name_text.grid(column = 0, row = 4)
 rad_file_name = Entry(File_info_frame)
 rad_file_name.grid(row = 4, column = 1)

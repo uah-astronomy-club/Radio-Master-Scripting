@@ -2,9 +2,9 @@
 :freq 1400 1
 :test
 :noisecal
-[Observation Time]
-:record [rad file name]
-:[Object]
-:[Integration time]
+2020:001:01:15:59
+:record testrad.rad
+:moon
+:20
 :roff
 :stow

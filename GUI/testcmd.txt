@@ -1,7 +1,12 @@
-2020:356:18:00:00
-: freq 1440 1
-: moon
-: record testrad.rad
-: 20
-: roff
-: stow
+2020:303:04:45:00
+:freq 1301 1
+:test
+:noisecal
+2020:303:05:00:00
+:record testrad
+:galactic 00:000
+:1
+:roff
+:stow
+2020:303:05:00:00
+:record testrad

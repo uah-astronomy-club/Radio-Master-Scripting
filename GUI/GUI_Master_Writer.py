@@ -10,12 +10,12 @@ import GUI_TelescopePointer as TP
 import GUI_CentFreqMode as CFM
 import GUI_TimeAndDataPoints as TDP
 import GUI_FileStart as FS
-#import GUI_ActualWriter as AW
+import GUI_ActualWriter as AW
 
 def main(objects):
     files_info = objects[0].split()
     directory = files_info[0]
-    cmd_file = files_info[1] + '.cmd'
+    cmd_file = files_info[1]
     
     # Deletes the file directory and name info for easier indexing
     del objects[0]
@@ -28,31 +28,64 @@ def main(objects):
         corrected_date = str(corrected_date)
         print(corrected_date)
         
-        if i==1:
+        if i==0:
             calibration_time = FS.starttime(corrected_date)
+            calibration_time = str(calibration_time)
+            print('Calibration time: ' + calibration_time)
             start = True
         else:
             start = False
         
-        if i == len(objects):
+        if i == len(objects)-1:
             last = True
         else:
             last = False
-            
-        # Puts all objects to be observed in a dictionary
-        object_dictionary = TP.pointatobject(object_dictionary, 
-                                             current_object_info[2], 
-                                             current_object_info[3])
         
-        # Sends the info to center frequ
-        freq_info = CFM.main(i,current_object_info[4], current_object_info[5])
+            
+        object_type = current_object_info[2]
+        obs_object = current_object_info[3]
+        cent_freq = current_object_info[4]
+        mode = current_object_info[5]
+        
+        if i==0:
+            prev_rad = ' '
+            curr_rad = current_object_info[8]
+        else:
+            prev_object_info = objects[i-1].split()
+            prev_rad = prev_object_info[8]
+        
+
+        if curr_rad == prev_rad:
+            new_rad = False
+        else:
+            new_rad = True
+            
+        int_time = current_object_info[6]
+        
+        #Send all the info to the program that writes the command file
+        AW.cmdfilewrite(start,directory,cmd_file,calibration_time,cent_freq,mode,new_rad,corrected_date,curr_rad,object_type,obs_object,int_time,last)
+        
+        
+        
+        
+        # # Puts all objects to be observed in a dictionary
+        # object_dictionary = TP.pointatobject(object_dictionary, 
+        #                                      current_object_info[2], 
+        #                                      current_object_info[3])
+        
+        # # Sends the info to center frequ
+        # freq_info = CFM.main(i,current_object_info[4], current_object_info[5])
         
         #Sends info to time and data points
         #timer_dict = TDP.timeanddatapoints(object_dictionary, 
         #                                     current_object_info[6])
         
-        #Send all the info to the program that writes the command file
         
+        
+        
+        # #Send all the info to the program that writes the command file
+        # AW.cmdfilewrite(start,directory,cmd_file,calibration_time,
+        #                 cent_freq,mode,new_rad,obs_time,rad_file,object_type,obs_object,int_time,last)
         
         
         
@@ -81,7 +114,7 @@ def main(objects):
 #['C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI cmd rad2', '2020-10-15 00:00:00 Listed 40G 1301 1 1 1 rad', '2020-10-16 00:00:00 Listed 60G 1304 2 2 2 rad2']
 
 
-main(['C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI cmd', '2020-10-15 00:00:00 Listed 40G 1301 1 1 1 rad', '2020-10-16 00:00:00 Listed 60G 1304 2 2 2 rad2'])
+# main(['C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI cmd', '2020-10-15 00:00:00 Listed 40G 1301 1 1 1 rad', '2020-10-16 00:00:00 Listed 60G 1304 2 2 2 rad2'])
 
 # add integration time to observation start time to determine observation end time
 

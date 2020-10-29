@@ -5,8 +5,9 @@ Created on Fri Oct 16 21:28:34 2020
 @author: Brandon Staton
 """
 
-def cmdfilewrite(start,cmd_file_dir,cmd_name,cal_time,cent_freq,mode,new_rad,last):
+def cmdfilewrite(start,cmd_file_dir,cmd_name,cal_time,cent_freq,mode,new_rad,obs_time,rad_file,object_type,obs_object,int_time,last):
     
+    #TODO - change .txt to .cmd
     full_cmd_file_path = cmd_file_dir + '\\' + cmd_name + '.txt'
     if start == True:
         cmdfile = open(full_cmd_file_path,'w+')
@@ -18,13 +19,21 @@ def cmdfilewrite(start,cmd_file_dir,cmd_name,cal_time,cent_freq,mode,new_rad,las
     
     
     cmdfile = open(full_cmd_file_path,'a')
-    cmdfile.write('\n[Observation Time]')
+    cmdfile.write('\n' + str(obs_time))
     
     if new_rad == True:
-        cmdfile.write('\n:record ' + '[rad file name]')
+        cmdfile.write('\n:record ' + str(rad_file))
     
-    cmdfile.write('\n:[Object]')
-    cmdfile.write('\n:[Integration time]')
+    if object_type == 'Listed':
+        object_write = obs_object
+    elif object_type == 'Gal':
+        object_write = 'galactic ' + str(obs_object)
+    elif object_type == 'Azel':
+        object_write = 'azel ' + str(obs_object)
+
+    
+    cmdfile.write('\n:' + object_write)
+    cmdfile.write('\n:' + str(int_time))
     cmdfile.write('\n:roff')
     cmdfile.close()
     
@@ -41,20 +50,27 @@ def cmdfilewrite(start,cmd_file_dir,cmd_name,cal_time,cent_freq,mode,new_rad,las
     print(file_contents)
     return
 
-def main():
-    start = True
-    test_cmd_file_dir = 'C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI\\Scripts'
-    test_cmd_name = 'testcmd'
-    cal_time = '2020:001:01:00:59'
-    cent_freq = 1400
-    mode = 1
-    obs_time = '2020:001:01:15:59'
+# def main():
+#     start = True
+#     test_cmd_file_dir = 'C:\\Users\\bstat\\Documents\\GitHub\\Radio-Master-Scripting\\GUI\\Scripts'
+#     test_cmd_name = 'testcmd'
+#     cal_time = '2020:001:01:00:59'
+#     cent_freq = 1400
+#     mode = 1
+#     obs_time = '2020:001:01:15:59'
+#     rad_file = 'testrad.rad'
+#     object_type = 'listed'
+#     obs_object = 'moon'
+#     int_time = 20
     
-    new_rad = True
-    last = True
+#     new_rad = True
+#     last = True
     
-    cmdfilewrite(start,test_cmd_file_dir, test_cmd_name,cal_time,cent_freq,mode,new_rad,last)
-main()
+#     cmdfilewrite(start,test_cmd_file_dir, test_cmd_name,cal_time,cent_freq,mode,new_rad,obs_time,rad_file,object_type,obs_object,int_time,last)
+# main()
+
+# def test():
+#     return
 
 
 #------------------------------------------------------------------------------

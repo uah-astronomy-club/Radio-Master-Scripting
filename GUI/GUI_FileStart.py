@@ -69,11 +69,11 @@ def starttime(obs_time):
     else:
         day = str(day)       
                   
-    output = year + ':' + day + ':' + hr + ':' + mn + ':' + sc
-    print(output)
+    calibration_time = year + ':' + day + ':' + hr + ':' + mn + ':' + sc
+    print(calibration_time)
  
     #TODO - check if day light savings before deleting hour
-    return
+    return calibration_time
 
 def isLeapYear(year):
     # Var that holds True if year is leap year and False if not a leap year
